@@ -25,9 +25,3 @@ VLM/
 2. **Dissect** - for each key paper, copy `02-papers/TEMPLATE.md`, fill in the 5 layers. The final section ("Next-gen implications") feeds the gap map.
 3. **Track** - when a new model drops, add it to `03-registry/models.json` and ask Claude to refresh the dashboard.
 4. **Design** - accumulate observations in `04-next-gen/gap-map.md`. When 2–3 gaps intersect, that's a next-gen architecture candidate — bring it to Claude (rs-dl-architect skill) to design and prototype.
-
-## Recurring with Claude
-
-- "Scan arXiv/HuggingFace for new GeoFM papers this week" → updates registry + dashboard
-- "Dissect <paper> with me" → guided 5-layer analysis into 02-papers/
-- "Design a model targeting gaps X + Y" → architecture + PyTorch scaffold
