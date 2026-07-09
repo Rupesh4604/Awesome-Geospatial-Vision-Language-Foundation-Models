@@ -1,0 +1,60 @@
+{
+  "updated": "2026-07-07",
+  "note": "Seed data compiled from papers/abstracts — verify against original papers before citing. Community corrections welcome.",
+  "benchmarks": [
+    {
+      "name": "GEO-Bench-2",
+      "year": 2025,
+      "track": "vision",
+      "measures": "Classification, segmentation, regression, detection, instance seg — grouped into capability groups with a standardized adaptation protocol",
+      "leaders": ["TerraMind (multiple capability groups)", "Prithvi-EO 2.0", "Clay"],
+      "finding": "No single GeoFM dominates across tasks; EO-pretrained models beat natural-image models on multispectral tasks, but DINOv3-class baselines stay competitive on RGB.",
+      "link": "https://hf.co/papers/2511.15658"
+    },
+    {
+      "name": "PANGAEA",
+      "year": 2024,
+      "track": "vision",
+      "measures": "Global multi-domain dense prediction under a frozen-encoder protocol",
+      "leaders": ["varies by domain; FLORO reports strong results with a small pretraining set"],
+      "finding": "Frozen-encoder rankings differ sharply from fine-tuned rankings — adaptation protocol changes who wins.",
+      "link": "https://arxiv.org/abs/2412.04204"
+    },
+    {
+      "name": "LHRS-Bench",
+      "year": 2024,
+      "track": "vlm",
+      "measures": "RS understanding & reasoning, 690 multiple-choice questions across capability levels",
+      "leaders": ["LHRS-Bot-Nova (among open RS models at release)"],
+      "finding": "Small (108 images) — treat as a probe, not a ranking; contamination with common RS training sets is a real risk.",
+      "link": "https://arxiv.org/abs/2402.02544"
+    },
+    {
+      "name": "EarthMind-Bench",
+      "year": 2025,
+      "track": "vlm",
+      "measures": "Multi-granular (image/region/pixel) + multi-sensor (optical+SAR) understanding, MC and open-ended",
+      "leaders": ["EarthMind-4B (reported to surpass GPT-4o)"],
+      "finding": "SAR subsets crush RGB-trained models: e.g. reported grounding-style scores EarthMind 13.6 vs GeoChat 2.6 (SAR) — the sensor gap is bigger than the model gap.",
+      "link": "https://arxiv.org/abs/2506.01667"
+    },
+    {
+      "name": "RSMMVP",
+      "year": 2025,
+      "track": "vlm",
+      "measures": "Vision-centric probes (counting, relative position, small objects) built from CLIP-blind pairs",
+      "leaders": ["none — designed to expose failures"],
+      "finding": "RS MLLMs fail systematically on spatial/counting probes; the bottleneck is the CLIP-class encoder (Slot A), not the LLM.",
+      "link": "https://arxiv.org/abs/2503.15816"
+    },
+    {
+      "name": "VRSBench / GeoChat-Bench",
+      "year": 2024,
+      "track": "vlm",
+      "measures": "Captioning, VQA, visual grounding on RS imagery",
+      "leaders": ["rotates with each release"],
+      "finding": "Grounding IoU and text metrics diverge — always report both; many instruction sets share source data with these benchmarks (contamination).",
+      "link": "https://arxiv.org/abs/2406.12384"
+    }
+  ]
+}

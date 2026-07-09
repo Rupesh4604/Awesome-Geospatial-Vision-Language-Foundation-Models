@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anatomy of an RS-VLM — GeoFM Lab</title>
+<style>
+  :root{--bg:#0b1120;--panel:#121a2e;--panel2:#1a2440;--border:#243154;--text:#e2e8f0;--muted:#8b9bbd;--accent:#38bdf8;--accent2:#34d399;--amber:#fbbf24;--rose:#fb7185;--violet:#a78bfa}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;padding-bottom:60px}
+  header{padding:24px 32px;border-bottom:1px solid var(--border)}
+  h1{font-size:22px}h1 span{color:var(--accent)}
+  .sub{color:var(--muted);font-size:13px;margin-top:4px}
+  a.back{color:var(--accent);font-size:13px;text-decoration:none}
+  main{max-width:1250px;margin:0 auto;padding:24px 32px}
+  h2{font-size:17px;margin:34px 0 6px}
+  h2 .n{color:var(--accent)}
+  .lead{color:var(--muted);font-size:13.5px;line-height:1.6;max-width:900px;margin-bottom:16px}
+  /* three axes */
+  .axes{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+  .axis{background:var(--panel);border:1px solid var(--border);border-top:3px solid var(--accent);border-radius:12px;padding:18px}
+  .axis:nth-child(2){border-top-color:var(--violet)}
+  .axis:nth-child(3){border-top-color:var(--accent2)}
+  .axis h3{font-size:15px;margin-bottom:6px}
+  .axis p{font-size:12.5px;color:var(--muted);line-height:1.55}
+  .axis .opts{margin-top:10px;display:flex;flex-wrap:wrap;gap:5px}
+  .opt{font-size:11px;background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:2px 9px;color:var(--text)}
+  /* model selector */
+  .models{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 20px}
+  .mbtn{background:var(--panel2);border:1px solid var(--border);color:var(--muted);border-radius:18px;padding:7px 16px;font-size:13px;cursor:pointer}
+  .mbtn.on{background:var(--accent);color:#04121f;border-color:var(--accent);font-weight:600}
+  /* pipeline */
+  .pipe{display:flex;align-items:stretch;gap:0;overflow-x:auto;padding:10px 0}
+  .stage{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px;min-width:190px;flex:1;display:flex;flex-direction:column;gap:6px;transition:border-color .2s}
+  .stage.diff{border-color:var(--amber)}
+  .stage h4{font-size:12.5px;color:var(--accent)}
+  .stage .shape{font-family:Consolas,monospace;font-size:11px;color:var(--accent2);background:#0c1526;border-radius:6px;padding:4px 8px}
+  .stage .desc{font-size:11.5px;color:var(--muted);line-height:1.5}
+  .stage .badge{align-self:flex-start;font-size:9.5px;font-weight:700;color:var(--amber);border:1px solid var(--amber);border-radius:8px;padding:1px 7px;text-transform:uppercase;letter-spacing:.5px}
+  .arrow{display:flex;align-items:center;color:var(--muted);padding:0 6px;font-size:18px;flex-shrink:0}
+  .mnote{background:var(--panel2);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:10px;padding:13px 16px;font-size:13px;line-height:1.6;margin-top:14px}
+  .mnote b{color:var(--accent)}
+  /* deep dives */
+  details{background:var(--panel);border:1px solid var(--border);border-radius:12px;margin-bottom:10px}
+  summary{padding:14px 18px;cursor:pointer;font-size:14px;font-weight:600}
+  summary:hover{color:var(--accent)}
+  .dd{padding:0 18px 16px;font-size:13px;color:var(--muted);line-height:1.65}
+  .dd code{font-family:Consolas,monospace;font-size:12px;background:#0c1526;color:var(--accent2);padding:1px 6px;border-radius:4px}
+  .dd pre{font-family:Consolas,monospace;font-size:12px;background:#0c1526;color:var(--text);padding:12px 14px;border-radius:8px;overflow-x:auto;margin:10px 0;line-height:1.5}
+  .dd b{color:var(--text)}
+  .check{background:var(--panel);border:1px solid var(--border);border-left:3px solid var(--accent2);border-radius:10px;padding:14px 18px;margin-bottom:10px;font-size:13px;line-height:1.6}
+  .check b{color:var(--accent2)}
+</style>
+</head>
+<body>
+<header>
+  <a class="back" href="index.html">← GeoFM Lab dashboard</a>
+  <h1 style="margin-top:8px">🔬 Anatomy of an <span>RS Vision-Language Model</span></h1>
+  <div class="sub">Every RS-VLM is three design choices. Learn the pipeline once, then read papers as diffs.</div>
+</header>
+<main>
+
+<h2><span class="n">1.</span> The three-slot mental model</h2>
+<p class="lead">File every paper into these three slots and the literature stops feeling like a zoo. When you read a new RS-VLM paper, ask only: what changed in each slot vs LLaVA-1.5?</p>
+<div class="axes">
+  <div class="axis">
+    <h3>Slot A — What encodes the pixels?</h3>
+    <p>The vision encoder turns the image into a grid of feature vectors. Nearly everyone uses CLIP/SigLIP ViT — which is exactly the field's weakness (CLIP-blindness: counting, relative position, small objects). The frontier move is swapping in an EO-native encoder.</p>
+    <div class="opts"><span class="opt">CLIP ViT-L (default)</span><span class="opt">SigLIP</span><span class="opt">DINOv2</span><span class="opt">GeoFM encoder (rare, G11)</span><span class="opt">multi-encoder (EarthMind)</span></div>
+  </div>
+  <div class="axis">
+    <h3>Slot B — What bridges to the LLM?</h3>
+    <p>The bridge (projector) maps vision features into the LLM's token embedding space, so image patches become "words" the LLM can attend to. Simple MLPs won; query-based compressors trade fidelity for fewer tokens.</p>
+    <div class="opts"><span class="opt">2-layer MLP (LLaVA default)</span><span class="opt">Q-Former / resampler</span><span class="opt">pixel-shuffle downsample</span><span class="opt">per-sensor projectors</span></div>
+  </div>
+  <div class="axis">
+    <h3>Slot C — What grounds the output?</h3>
+    <p>How does language connect back to space? This is where RS-VLMs genuinely innovate — from coordinates written as plain text, to special tokens that trigger a mask decoder, to agentic zoom loops.</p>
+    <div class="opts"><span class="opt">none (caption/VQA)</span><span class="opt">bbox-as-text (GeoChat)</span><span class="opt">&lt;SEG&gt; token → mask decoder (GeoPixel)</span><span class="opt">attention prompting (EarthMind)</span><span class="opt">agentic search (GeoViS/GeoEyes)</span></div>
+  </div>
+</div>
+
+<h2><span class="n">2.</span> The pipeline — pick a model, watch what changes</h2>
+<p class="lead">Amber stages = where this model differs from the LLaVA-1.5 baseline. Shapes assume a 336×336 RGB input unless noted.</p>
+<div class="models" id="models"></div>
+<div class="pipe" id="pipe"></div>
+<div class="mnote" id="mnote"></div>
+
+<h2><span class="n">3.</span> Stage deep-dives</h2>
+<details open><summary>Patchify & the vision encoder (Slot A)</summary><div class="dd">
+A ViT splits the image into 14×14-px patches: 336/14 = 24 → <code>24×24 = 576 patch tokens</code>, each projected to a 1024-d vector, giving <code>[B, 576, 1024]</code>. Positional embeddings add location; ~24 transformer layers mix information globally.<br><br>
+<b>Why this matters for RS:</b> a 10k×10k scene resized to 336px makes a car smaller than one patch — it simply ceases to exist for the model. Fixes: AnyRes tiling (encode crops separately, concat tokens), or agentic zooming. Also note CLIP was contrastively trained to match captions — it keeps <i>what</i> is in the image, discards <i>where</i> and <i>how many</i>. That bias is inherited by every downstream RS-VLM (measured by RSMMVP).
+</div></details>
+<details><summary>The projector (Slot B) — the entire "alignment" trick</summary><div class="dd">
+The LLM only understands vectors in its own embedding space (e.g. 4096-d for a 7B LLaMA). The projector is often just:
+<pre>vision_feats [B, 576, 1024]
+  → Linear(1024→4096) → GELU → Linear(4096→4096)
+  → visual tokens [B, 576, 4096]   # now "words"</pre>
+These are spliced into the prompt: <code>&lt;sys&gt; USER: &lt;img₁…img₅₇₆&gt; What is in the harbor? ASSISTANT:</code>. Training Stage 1 freezes everything except this projector — hours, not days, of GPU time. That such a small module suffices tells you CLIP features and LLM word embeddings are already nearly linearly alignable — the deepest single fact in VLM land.
+</div></details>
+<details><summary>Grounding mechanisms (Slot C) — compared</summary><div class="dd">
+<b>Bbox-as-text (GeoChat):</b> the model literally writes <code>&lt;obb&gt;{47, 112, 98, 163, 30°}&lt;/obb&gt;</code>. Zero extra architecture; grounding is "just" next-token prediction. Fragile — numbers drift after further fine-tuning, precision limited by tokenizer granularity.<br><br>
+<b>Special token + decoder (GeoPixel, LISA-style):</b> the LLM emits a <code>&lt;SEG&gt;</code> token; its final hidden state becomes the prompt embedding for a SAM-style mask decoder → true pixel mask. Precise, adds a decoder to train, needs mask-annotated dialogue data.<br><br>
+<b>Attention prompting (EarthMind):</b> reweights LLM attention toward spatially relevant visual tokens; multi-granular (image→region→pixel) without coordinates in the text stream.<br><br>
+<b>Agentic (GeoViS/GeoEyes):</b> grounding becomes a policy — crop, look, decide whether to zoom again. Handles 10k×10k scenes; costs multiple forward passes per answer.
+</div></details>
+<details><summary>The three training stages</summary><div class="dd">
+<b>Stage 1 — Alignment:</b> freeze encoder + LLM, train projector on image-caption pairs (RS: SkyScript, RS5M, LHRS-Align). Teaches the LLM to "see" but not to converse about it.<br><br>
+<b>Stage 2 — Instruction tuning:</b> unfreeze LLM (or LoRA r=16–64), train on multi-task conversations (VQA, grounding, captioning mixed). This is where capabilities come from — and where RS models differentiate: GeoChat's 318k RS instructions, EarthDial's 11M+, MMRS-1M's multi-sensor set. <b>Data construction is the real contribution of most RS-VLM papers.</b><br><br>
+<b>Stage 3 (optional):</b> mask-decoder training (GeoPixel), preference/DPO for robustness (RemoteShield), RL for search policies (GeoViS).
+</div></details>
+<details><summary>Why multispectral input is hard for VLMs (G12)</summary><div class="dd">
+CLIP expects 3 channels; Sentinel-2 has 13. Most "multi-sensor" RS-VLMs quietly render SAR/MSI to pseudo-RGB composites before encoding — throwing away SWIR, red-edge, and phase information. Real fixes mirror pure-vision GeoFMs: band-adapted patch embeddings (EarthDial-style), per-modality encoders fused before the LLM (EarthMind), or a wavelength-conditioned encoder (DOFA) swapped in as Slot A. Check a model's preprocessing config before believing its sensor claims.
+</div></details>
+
+<h2><span class="n">4.</span> Check yourself</h2>
+<div class="check"><b>Q1.</b> A 7B RS-VLM writes bounding boxes as text. After you LoRA-fine-tune it on your captioning data, grounding degrades but captions improve. Which slot broke, and why?</div>
+<div class="check"><b>Q2.</b> You need referring segmentation ("mask the flooded fields west of the bridge") on 8k×8k imagery. Which Slot C mechanism and which resolution strategy do you pick, and what data do you need?</div>
+<div class="check"><b>Q3.</b> Your model answers "how many aircraft?" wrong 70% of the time but describes airports fluently. Explain using Slot A. What experiment isolates the encoder as the cause?</div>
+<div class="check"><b>Q4.</b> Sketch (pseudocode) the forward pass of GeoPixel from image to mask. Where does the LLM hidden state meet the mask decoder?</div>
+
+</main>
+<script>
+const S=(t,shape,desc,diff,badge)=>({t,shape,desc,diff:!!diff,badge:badge||""});
+const ANATOMY={
+ "LLaVA-1.5 (baseline)":{
+  note:"<b>The reference recipe.</b> Everything below is a diff against this. CLIP ViT-L/14-336 encoder → 2-layer MLP projector → Vicuna-7B/13B. Trained: Stage 1 on 558k captions, Stage 2 on 665k instructions. No grounding machinery, no RS data.",
+  stages:[
+   S("Input","336×336×3","Resize/crop natural image. RS scenes lose small objects here."),
+   S("Vision encoder — CLIP ViT-L","[B, 576, 1024]","14px patches → 576 tokens; contrastively pretrained on web image-text."),
+   S("Bridge — MLP projector","[B, 576, 4096]","Linear-GELU-Linear into LLM embedding space. Only module trained in Stage 1."),
+   S("LLM — Vicuna 7B","text tokens","Visual tokens spliced into prompt; standard next-token prediction."),
+   S("Output — text","caption / answer","No spatial output. Grounding = Slot C is empty.")]},
+ "GeoChat":{
+  note:"<b>LLaVA + RS data + bbox-as-text.</b> The field's reference. Diffs: 318k RS instruction pairs (built from DOTA/DIOR/etc.), task tokens (<code>[grounding]</code>), and oriented bounding boxes written as plain text. Architecture is ~untouched — proof that data construction is the contribution.",
+  stages:[
+   S("Input","504×504×3","RS image, higher res than LLaVA; still resized — small objects at risk.",1,"res ↑"),
+   S("Vision encoder — CLIP ViT-L","[B, 1296, 1024]","Same CLIP, interpolated positional embeddings for larger input.",1,"pos-embed interp"),
+   S("Bridge — MLP projector","[B, 1296, 4096]","Unchanged LLaVA recipe."),
+   S("LLM — Vicuna 7B + LoRA","text tokens","LoRA fine-tuned on RS instructions with task tokens.",1,"RS instructions"),
+   S("Output — text + OBB-as-text","<obb>{x,y,w,h,θ}</obb>","Oriented boxes emitted as literal text tokens. Zero extra params; fragile numbers.",1,"Slot C: bbox-as-text")]},
+ "GeoPixel":{
+  note:"<b>Pixel grounding via &lt;SEG&gt; token + mask decoder (LISA pattern).</b> Diffs: AnyRes tiling up to ~4K input, and the LLM's hidden state for a special token drives a SAM-style decoder producing true masks interleaved in conversation. Needs GeoPixelD (grounded conversation + masks).",
+  stages:[
+   S("Input — AnyRes tiling","N crops × 336²","4K scene split into crops + global thumbnail; tokens concatenated.",1,"tiling"),
+   S("Vision encoder — CLIP ViT","[B, N·576, 1024]","Per-crop encoding preserves small objects that plain resize destroys.",1),
+   S("Bridge — MLP projector","[B, N·576, d]","Standard projection; token count grows with crops."),
+   S("LLM emits <SEG> tokens","hidden h_seg","Answer text contains special tokens; each one's final hidden state is extracted.",1,"Slot C hook"),
+   S("Mask decoder (SAM-style)","[B, H, W] masks","h_seg becomes the prompt embedding for a segmentation decoder → pixel masks.",1,"new module")]},
+ "EarthMind":{
+  note:"<b>Multi-sensor + multi-granular.</b> Diffs: optical AND SAR encoders with cross-modal fusion before the LLM; Spatial Attention Prompting reweights attention toward query-relevant visual tokens for region/pixel granularity. 4B-scale yet reported to beat GPT-4o on EarthMind-Bench.",
+  stages:[
+   S("Input — optical + SAR","2 aligned images","Paired sensors, spatially registered.",1,"multi-sensor"),
+   S("Per-modality encoders","2 × [B, 576, d]","Separate encoders per sensor; features fused cross-modally.",1,"Slot A: dual"),
+   S("Bridge — fusion + projector","[B, T, d_llm]","Cross-modal fusion module then projection — bridge does real work here.",1,"Slot B: fusion"),
+   S("LLM + Spatial Attention Prompting","reweighted attn","Attention steered toward spatially relevant tokens per query.",1,"Slot C: attn"),
+   S("Output — text / region / mask","multi-granular","Image-, region-, and pixel-level answers from one model.",1)]},
+ "EarthDial":{
+  note:"<b>Breadth play: multi-spectral, multi-temporal, multi-resolution dialogue.</b> Diffs: band-adapted input handling beyond RGB, bi-temporal pairs for change description, and the field's largest instruction corpus (11M+ pairs). 4B — capability from data, not scale.",
+  stages:[
+   S("Input — MSI/SAR/IR, ×T dates","bands > 3, T ≥ 1","Accepts non-RGB bands and temporal pairs — rare in this field.",1,"Slot A: bands"),
+   S("Vision encoder — adapted","[B·T, 576, d]","Patch embedding adapted to input type; dates encoded separately."),
+   S("Bridge — projector","[B, T·576, d_llm]","Temporal tokens concatenated for the LLM.",1,"temporal"),
+   S("LLM — instruction tuned","text tokens","11M+ instruction pairs across sensors/tasks/resolutions.",1,"data scale"),
+   S("Output — text + change desc.","bi-temporal QA","'What changed between these dates?' — change description as dialogue.",1)]},
+ "RemoteCLIP (contrastive)":{
+  note:"<b>Different species — no LLM at all.</b> Dual encoders trained contrastively: image and text mapped into one embedding space. Can't converse; excels at retrieval and zero-shot classification. Often the right tool when the 'language' need is just a query string. Also the cheapest RS-VLM to deploy.",
+  stages:[
+   S("Input","224×224×3","RS image (and separately, a text query)."),
+   S("Vision encoder — ViT","[B, 512]","Single pooled embedding per image — no patch tokens kept.",1,"pooled"),
+   S("Text encoder","[B, 512]","Query text embedded into the same space.",1,"no LLM"),
+   S("Similarity","cosine(v, t)","Dot product ranks images against text (or labels).",1,"Slot B = shared space"),
+   S("Output — ranking / label","top-k","Zero-shot classification = retrieval against label prompts.",1)]}
+};
+const mdiv=document.getElementById("models"),pipe=document.getElementById("pipe"),mnote=document.getElementById("mnote");
+Object.keys(ANATOMY).forEach((k,i)=>{
+  const b=document.createElement("button");b.className="mbtn"+(i===0?" on":"");b.textContent=k;
+  b.onclick=()=>{document.querySelectorAll(".mbtn").forEach(x=>x.classList.remove("on"));b.classList.add("on");render(k)};
+  mdiv.appendChild(b);
+});
+function render(k){
+  const m=ANATOMY[k];
+  pipe.innerHTML=m.stages.map((s,i)=>`
+    ${i?'<div class="arrow">→</div>':''}
+    <div class="stage${s.diff?' diff':''}">
+      ${s.badge?`<span class="badge">${s.badge}</span>`:''}
+      <h4>${s.t}</h4><div class="shape">${s.shape}</div><div class="desc">${s.desc}</div>
+    </div>`).join("");
+  mnote.innerHTML=m.note;
+}
+render("LLaVA-1.5 (baseline)");
+</script>
+</body>
+</html>

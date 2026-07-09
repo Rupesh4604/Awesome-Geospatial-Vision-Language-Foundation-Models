@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RS-VLM Comparison Matrix — GeoFM Lab</title>
+<style>
+  :root{--bg:#0b1120;--panel:#121a2e;--panel2:#1a2440;--border:#243154;--text:#e2e8f0;--muted:#8b9bbd;--accent:#38bdf8;--accent2:#34d399;--amber:#fbbf24;--violet:#a78bfa}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;padding-bottom:60px}
+  header{padding:24px 32px;border-bottom:1px solid var(--border)}
+  h1{font-size:22px}h1 span{color:var(--accent)}
+  .sub{color:var(--muted);font-size:13px;margin-top:4px;max-width:950px;line-height:1.55}
+  a.back{color:var(--accent);font-size:13px;text-decoration:none}
+  main{max-width:1500px;margin:0 auto;padding:24px 32px}
+  .legend{display:flex;flex-wrap:wrap;gap:16px;margin-bottom:14px;font-size:12px;color:var(--muted)}
+  .legend b{color:var(--text)}
+  .tablewrap{overflow-x:auto;border:1px solid var(--border);border-radius:12px}
+  table{border-collapse:collapse;width:100%;min-width:1250px;font-size:12.5px}
+  th{background:var(--panel2);color:var(--text);text-align:left;padding:11px 12px;position:sticky;top:0;white-space:nowrap;cursor:pointer;user-select:none}
+  th .ax{display:block;font-size:9.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase}
+  th.a1 .ax{color:var(--accent)} th.a2 .ax{color:var(--violet)} th.a3 .ax{color:var(--accent2)}
+  td{padding:10px 12px;border-top:1px solid var(--border);vertical-align:top;line-height:1.5;color:var(--muted)}
+  td.model{color:var(--text);font-weight:600;white-space:nowrap}
+  td.model a{color:var(--text);text-decoration:none}
+  td.model a:hover{color:var(--accent)}
+  td.model .yr{display:block;font-weight:400;font-size:11px;color:var(--muted)}
+  .pill{display:inline-block;font-size:10.5px;border:1px solid var(--border);background:var(--panel2);border-radius:9px;padding:1px 8px;margin:1px 2px 1px 0;color:var(--text)}
+  .hl{color:var(--amber)}
+  tr:hover td{background:rgba(56,189,248,.04)}
+  .note{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px 18px;font-size:13px;color:var(--muted);line-height:1.6;margin-top:18px;max-width:1000px}
+  .note b{color:var(--text)}
+</style>
+</head>
+<body>
+<header>
+  <a class="back" href="index.html">← GeoFM Lab dashboard</a>
+  <h1 style="margin-top:8px">⚖️ RS-VLM <span>Comparison Matrix</span></h1>
+  <div class="sub">Every model filed into the three slots — <span style="color:var(--accent)">Slot A: what encodes pixels</span> · <span style="color:var(--violet)">Slot B: what bridges to the LLM</span> · <span style="color:var(--accent2)">Slot C: what grounds the output</span> — plus the practical columns that decide whether you can actually use it. Amber = the model's distinguishing move. Click headers to sort.</div>
+</header>
+<main>
+<div class="legend"><span><b>Grounding levels:</b> none → box → oriented box → mask (pixel) → agentic</span><span><b>Sensor claims:</b> verify preprocessing before trusting (pseudo-RGB is common)</span></div>
+<div class="tablewrap"><table id="tbl">
+<thead><tr>
+  <th>Model</th>
+  <th class="a1"><span class="ax">Slot A</span>Vision encoder</th>
+  <th class="a2"><span class="ax">Slot B</span>Bridge</th>
+  <th class="a3"><span class="ax">Slot C</span>Grounding</th>
+  <th>LLM</th>
+  <th>Sensors (real)</th>
+  <th>Resolution strategy</th>
+  <th>Instruction data</th>
+  <th>Distinguishing move</th>
+</tr></thead>
+<tbody></tbody>
+</table></div>
+
+<div class="note"><b>How to use this table as an exercise (Phase 5c):</b> before reading each paper, predict its three slots from the abstract alone. After dissecting, correct the row. When you can fill a row for a brand-new arXiv paper in under 10 minutes, you understand the field. Empty/uncertain cells are marked "?" — verifying them against the papers is the exercise. PRs welcome if you publish this.</div>
+</main>
+<script>
+const ROWS=[
+ {m:"RSGPT",y:2023,link:"https://arxiv.org/abs/2307.15266",a:"EVA-CLIP ViT",b:"Q-Former style",c:"none (caption/VQA)",llm:"Vicuna-7B",sens:"RGB",res:"fixed low-res",data:"RSICap (2.5k human captions)",move:"first mover; proved instruction tuning works on RS"},
+ {m:"GeoChat",y:2024,link:"https://arxiv.org/abs/2311.15826",a:"CLIP ViT-L/14, pos-embed interp to 504px",b:"MLP (LLaVA)",c:"oriented bbox-as-text + region-in prompts",llm:"Vicuna-7B + LoRA",sens:"RGB",res:"504px fixed",data:"318k RS instructions (DOTA/DIOR/…)",move:"the reference recipe; task tokens + OBB grounding"},
+ {m:"EarthGPT",y:2024,link:"https://arxiv.org/abs/2401.16822",a:"ViT + conv branch (visual-enhanced)",b:"linear projection",c:"box-as-text",llm:"LLaMA-2-13B",sens:"RGB, SAR, IR",res:"fixed",data:"MMRS-1M multi-sensor",move:"first credible multi-sensor MLLM"},
+ {m:"LHRS-Bot",y:2024,link:"https://arxiv.org/abs/2402.02544",a:"CLIP ViT-L",b:"multi-level vision perceiver (queries over several ViT depths)",c:"box-as-text",llm:"LLaMA-2-7B",sens:"RGB",res:"fixed",data:"LHRS-Align (OSM/VGI-mined) + LHRS-Instruct",move:"multi-depth features + curriculum; OSM data mining"},
+ {m:"SkySenseGPT",y:2024,link:"https://arxiv.org/abs/2406.10100",a:"CLIP ViT",b:"MLP",c:"box-as-text + scene graph",llm:"Vicuna-7B",sens:"RGB",res:"fixed",data:"FIT-RS (relation-centric)",move:"relation reasoning / scene-graph generation"},
+ {m:"EarthDial",y:2024,link:"https://arxiv.org/abs/2412.15190",a:"InternViT, band-adapted",b:"MLP + temporal concat",c:"box-as-text",llm:"Phi-3 class (≈4B)",sens:"RGB, MSI, SAR, IR, bi-temporal",res:"dynamic tiling",data:"11M+ pairs, multi-sensor",move:"breadth: spectra × time × resolution in dialogue"},
+ {m:"GeoPixel",y:2025,link:"https://arxiv.org/abs/2501.13925",a:"CLIP ViT + AnyRes tiling",b:"MLP",c:"<SEG> token → SAM-style mask decoder",llm:"InternLM/Vicuna-7B",sens:"RGB",res:"AnyRes up to ~4K",data:"GeoPixelD grounded conversations",move:"pixel masks interleaved in dialogue"},
+ {m:"EarthMind",y:2025,link:"https://arxiv.org/abs/2506.01667",a:"dual encoders (optical + SAR)",b:"cross-modal fusion + projector",c:"spatial attention prompting → region/pixel",llm:"≈4B",sens:"RGB + SAR (real fusion)",res:"fixed + attention steering",data:"EarthMind corpus + bench",move:"multi-granular + multi-sensor at small scale"},
+ {m:"OmniGeo",y:2025,link:"https://arxiv.org/abs/2503.16326",a:"CLIP-class ViT",b:"MLP",c:"none / task-dependent",llm:"7B class",sens:"RGB + metadata + vector",res:"fixed",data:"mixed GeoAI corpora",move:"fuses imagery with spatial/vector data"},
+ {m:"GeoViS",y:2025,link:"https://arxiv.org/abs/2512.02715",a:"CLIP-class ViT (per crop)",b:"MLP",c:"agentic: reward-guided iterative search",llm:"7B class",sens:"RGB",res:"tree-structured zoom over large scenes",data:"search trajectories",move:"grounding as a search policy"},
+ {m:"GeoEyes",y:2026,link:"https://arxiv.org/abs/2602.14201",a:"ViT (per focus window)",b:"MLP",c:"agentic: on-demand focusing, evidence chains",llm:"7B class",sens:"RGB (UHR)",res:"dynamic focusing on 10k×10k",data:"focus/evidence annotations",move:"evidence-grounded answers on ultra-high-res"},
+ {m:"RemoteShield",y:2026,link:"https://arxiv.org/abs/2604.17243",a:"CLIP-class ViT",b:"MLP",c:"box-as-text",llm:"7B class",sens:"RGB (+perturbed variants)",res:"fixed",data:"semantic-equivalence clusters",move:"robustness via preference learning"},
+ {m:"RemoteCLIP",y:2024,link:"https://arxiv.org/abs/2306.11029",a:"CLIP ViT (fine-tuned on RS)",b:"shared embedding space (no LLM)",c:"none — retrieval only",llm:"— (text encoder)",sens:"RGB",res:"224px",data:"RS image-text pairs",move:"the retrieval workhorse; cheapest deploy"}
+];
+const AX={a:"a1",b:"a2",c:"a3"};
+function fill(rows){
+ document.querySelector("#tbl tbody").innerHTML=rows.map(r=>`
+  <tr>
+   <td class="model"><a href="${r.link}" target="_blank">${r.m}</a><span class="yr">${r.y}</span></td>
+   <td>${r.a}</td><td>${r.b}</td><td>${r.c}</td>
+   <td>${r.llm}</td>
+   <td>${r.sens.split(", ").map(s=>`<span class="pill">${s}</span>`).join("")}</td>
+   <td>${r.res}</td><td>${r.data}</td>
+   <td class="hl">${r.move}</td>
+  </tr>`).join("");
+}
+let sortKey=null,asc=true;
+document.querySelectorAll("th").forEach((th,i)=>{
+ const keys=["m","a","b","c","llm","sens","res","data","move"];
+ th.onclick=()=>{const k=keys[i];asc=(sortKey===k)?!asc:true;sortKey=k;
+  fill([...ROWS].sort((x,y)=>(""+x[k]).localeCompare(""+y[k])*(asc?1:-1)));};
+});
+fill(ROWS);
+</script>
+</body>
+</html>
