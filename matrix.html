@@ -10,13 +10,15 @@
   body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;padding-bottom:60px}
   header{padding:24px 32px;border-bottom:1px solid var(--border)}
   h1{font-size:22px}h1 span{color:var(--accent)}
-  .sub{color:var(--muted);font-size:13px;margin-top:4px;max-width:950px;line-height:1.55}
+  .sub{color:var(--muted);font-size:13px;margin-top:4px;max-width:980px;line-height:1.55}
   a.back{color:var(--accent);font-size:13px;text-decoration:none}
-  main{max-width:1500px;margin:0 auto;padding:24px 32px}
-  .legend{display:flex;flex-wrap:wrap;gap:16px;margin-bottom:14px;font-size:12px;color:var(--muted)}
-  .legend b{color:var(--text)}
+  main{max-width:1600px;margin:0 auto;padding:24px 32px}
+  .filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;align-items:center}
+  .chip{background:var(--panel2);border:1px solid var(--border);color:var(--muted);border-radius:16px;padding:5px 13px;font-size:12px;cursor:pointer}
+  .chip.on{background:var(--accent);color:#04121f;border-color:var(--accent);font-weight:600}
+  input[type=search]{background:var(--panel2);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:7px 12px;font-size:13px;width:230px}
   .tablewrap{overflow-x:auto;border:1px solid var(--border);border-radius:12px}
-  table{border-collapse:collapse;width:100%;min-width:1250px;font-size:12.5px}
+  table{border-collapse:collapse;width:100%;min-width:1500px;font-size:12.5px}
   th{background:var(--panel2);color:var(--text);text-align:left;padding:11px 12px;position:sticky;top:0;white-space:nowrap;cursor:pointer;user-select:none}
   th .ax{display:block;font-size:9.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase}
   th.a1 .ax{color:var(--accent)} th.a2 .ax{color:var(--violet)} th.a3 .ax{color:var(--accent2)}
@@ -26,9 +28,10 @@
   td.model a:hover{color:var(--accent)}
   td.model .yr{display:block;font-weight:400;font-size:11px;color:var(--muted)}
   .pill{display:inline-block;font-size:10.5px;border:1px solid var(--border);background:var(--panel2);border-radius:9px;padding:1px 8px;margin:1px 2px 1px 0;color:var(--text)}
+  .pill.task{color:var(--accent2);border-color:#1d4a3d}
   .hl{color:var(--amber)}
   tr:hover td{background:rgba(56,189,248,.04)}
-  .note{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px 18px;font-size:13px;color:var(--muted);line-height:1.6;margin-top:18px;max-width:1000px}
+  .note{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px 18px;font-size:13px;color:var(--muted);line-height:1.6;margin-top:18px;max-width:1050px}
   .note b{color:var(--text)}
 </style>
 </head>
@@ -36,10 +39,19 @@
 <header>
   <a class="back" href="index.html">← GeoFM Lab dashboard</a>
   <h1 style="margin-top:8px">⚖️ RS-VLM <span>Comparison Matrix</span></h1>
-  <div class="sub">Every model filed into the three slots — <span style="color:var(--accent)">Slot A: what encodes pixels</span> · <span style="color:var(--violet)">Slot B: what bridges to the LLM</span> · <span style="color:var(--accent2)">Slot C: what grounds the output</span> — plus the practical columns that decide whether you can actually use it. Amber = the model's distinguishing move. Click headers to sort.</div>
+  <div class="sub">Every model filed into the three slots — <span style="color:var(--accent)">Slot A: what encodes pixels</span> · <span style="color:var(--violet)">Slot B: what bridges to the LLM</span> · <span style="color:var(--accent2)">Slot C: what grounds the output</span> — plus training data and task coverage. Amber = the model's distinguishing move. Click headers to sort; filter by capability below.</div>
 </header>
 <main>
-<div class="legend"><span><b>Grounding levels:</b> none → box → oriented box → mask (pixel) → agentic</span><span><b>Sensor claims:</b> verify preprocessing before trusting (pseudo-RGB is common)</span></div>
+<div class="filters">
+  <input type="search" id="q" placeholder="Search models, data, tasks…">
+  <span class="chip on" data-c="all">All</span>
+  <span class="chip" data-c="ref-seg">Pixel / ref-seg</span>
+  <span class="chip" data-c="reasoning">Reasoning / RL</span>
+  <span class="chip" data-c="grounding">Grounding</span>
+  <span class="chip" data-c="temporal">Temporal / change</span>
+  <span class="chip" data-c="multi-sensor">Multi-sensor</span>
+  <span class="chip" data-c="agentic">Agentic / UHR</span>
+</div>
 <div class="tablewrap"><table id="tbl">
 <thead><tr>
   <th>Model</th>
@@ -47,51 +59,86 @@
   <th class="a2"><span class="ax">Slot B</span>Bridge</th>
   <th class="a3"><span class="ax">Slot C</span>Grounding</th>
   <th>LLM</th>
-  <th>Sensors (real)</th>
-  <th>Resolution strategy</th>
-  <th>Instruction data</th>
+  <th>Training data</th>
+  <th>Tasks</th>
   <th>Distinguishing move</th>
 </tr></thead>
 <tbody></tbody>
 </table></div>
 
-<div class="note"><b>How to use this table as an exercise (Phase 5c):</b> before reading each paper, predict its three slots from the abstract alone. After dissecting, correct the row. When you can fill a row for a brand-new arXiv paper in under 10 minutes, you understand the field. Empty/uncertain cells are marked "?" — verifying them against the papers is the exercise. PRs welcome if you publish this.</div>
+<div class="note"><b>How to use this as an exercise (Phase 5c):</b> before reading each paper, predict its three slots from the abstract alone; correct the row after dissecting. Notice the historical drift: 2024 innovated in <b>Slot C</b> (grounding mechanisms), late-2024 in <b>data scale</b>, 2025–26 in <b>training method</b> (RL/reasoning) and <b>perception policy</b> (agentic zoom) — architecture is largely frozen at the LLaVA recipe. That stability is itself a gap (see G11/G12).</div>
 </main>
 <script>
 const ROWS=[
- {m:"RSGPT",y:2023,link:"https://arxiv.org/abs/2307.15266",a:"EVA-CLIP ViT",b:"Q-Former style",c:"none (caption/VQA)",llm:"Vicuna-7B",sens:"RGB",res:"fixed low-res",data:"RSICap (2.5k human captions)",move:"first mover; proved instruction tuning works on RS"},
- {m:"GeoChat",y:2024,link:"https://arxiv.org/abs/2311.15826",a:"CLIP ViT-L/14, pos-embed interp to 504px",b:"MLP (LLaVA)",c:"oriented bbox-as-text + region-in prompts",llm:"Vicuna-7B + LoRA",sens:"RGB",res:"504px fixed",data:"318k RS instructions (DOTA/DIOR/…)",move:"the reference recipe; task tokens + OBB grounding"},
- {m:"EarthGPT",y:2024,link:"https://arxiv.org/abs/2401.16822",a:"ViT + conv branch (visual-enhanced)",b:"linear projection",c:"box-as-text",llm:"LLaMA-2-13B",sens:"RGB, SAR, IR",res:"fixed",data:"MMRS-1M multi-sensor",move:"first credible multi-sensor MLLM"},
- {m:"LHRS-Bot",y:2024,link:"https://arxiv.org/abs/2402.02544",a:"CLIP ViT-L",b:"multi-level vision perceiver (queries over several ViT depths)",c:"box-as-text",llm:"LLaMA-2-7B",sens:"RGB",res:"fixed",data:"LHRS-Align (OSM/VGI-mined) + LHRS-Instruct",move:"multi-depth features + curriculum; OSM data mining"},
- {m:"SkySenseGPT",y:2024,link:"https://arxiv.org/abs/2406.10100",a:"CLIP ViT",b:"MLP",c:"box-as-text + scene graph",llm:"Vicuna-7B",sens:"RGB",res:"fixed",data:"FIT-RS (relation-centric)",move:"relation reasoning / scene-graph generation"},
- {m:"EarthDial",y:2024,link:"https://arxiv.org/abs/2412.15190",a:"InternViT, band-adapted",b:"MLP + temporal concat",c:"box-as-text",llm:"Phi-3 class (≈4B)",sens:"RGB, MSI, SAR, IR, bi-temporal",res:"dynamic tiling",data:"11M+ pairs, multi-sensor",move:"breadth: spectra × time × resolution in dialogue"},
- {m:"GeoPixel",y:2025,link:"https://arxiv.org/abs/2501.13925",a:"CLIP ViT + AnyRes tiling",b:"MLP",c:"<SEG> token → SAM-style mask decoder",llm:"InternLM/Vicuna-7B",sens:"RGB",res:"AnyRes up to ~4K",data:"GeoPixelD grounded conversations",move:"pixel masks interleaved in dialogue"},
- {m:"EarthMind",y:2025,link:"https://arxiv.org/abs/2506.01667",a:"dual encoders (optical + SAR)",b:"cross-modal fusion + projector",c:"spatial attention prompting → region/pixel",llm:"≈4B",sens:"RGB + SAR (real fusion)",res:"fixed + attention steering",data:"EarthMind corpus + bench",move:"multi-granular + multi-sensor at small scale"},
- {m:"OmniGeo",y:2025,link:"https://arxiv.org/abs/2503.16326",a:"CLIP-class ViT",b:"MLP",c:"none / task-dependent",llm:"7B class",sens:"RGB + metadata + vector",res:"fixed",data:"mixed GeoAI corpora",move:"fuses imagery with spatial/vector data"},
- {m:"GeoViS",y:2025,link:"https://arxiv.org/abs/2512.02715",a:"CLIP-class ViT (per crop)",b:"MLP",c:"agentic: reward-guided iterative search",llm:"7B class",sens:"RGB",res:"tree-structured zoom over large scenes",data:"search trajectories",move:"grounding as a search policy"},
- {m:"GeoEyes",y:2026,link:"https://arxiv.org/abs/2602.14201",a:"ViT (per focus window)",b:"MLP",c:"agentic: on-demand focusing, evidence chains",llm:"7B class",sens:"RGB (UHR)",res:"dynamic focusing on 10k×10k",data:"focus/evidence annotations",move:"evidence-grounded answers on ultra-high-res"},
- {m:"RemoteShield",y:2026,link:"https://arxiv.org/abs/2604.17243",a:"CLIP-class ViT",b:"MLP",c:"box-as-text",llm:"7B class",sens:"RGB (+perturbed variants)",res:"fixed",data:"semantic-equivalence clusters",move:"robustness via preference learning"},
- {m:"RemoteCLIP",y:2024,link:"https://arxiv.org/abs/2306.11029",a:"CLIP ViT (fine-tuned on RS)",b:"shared embedding space (no LLM)",c:"none — retrieval only",llm:"— (text encoder)",sens:"RGB",res:"224px",data:"RS image-text pairs",move:"the retrieval workhorse; cheapest deploy"}
+ {m:"RSGPT",y:2023,link:"https://arxiv.org/abs/2307.15266",a:"EVA-CLIP ViT",b:"Q-Former style",c:"none",llm:"Vicuna-7B",data:"RSICap 2.5k human captions",tasks:["caption","VQA"],cats:[],move:"first mover; proved instruction tuning on RS"},
+ {m:"GeoRSCLIP",y:2023,link:"https://arxiv.org/abs/2306.11300",a:"CLIP ViT (RS-tuned)",b:"shared embedding space (no LLM)",c:"none — retrieval",llm:"—",data:"RS5M 5M pairs",tasks:["zero-shot-cls","retrieval"],cats:[],move:"largest RS image-text corpus of its era"},
+ {m:"RemoteCLIP",y:2024,link:"https://arxiv.org/abs/2306.11029",a:"CLIP ViT (RS-tuned)",b:"shared embedding space (no LLM)",c:"none — retrieval",llm:"—",data:"RET-3 + DET-10 + SEG-4 (~165k)",tasks:["zero-shot-cls","retrieval"],cats:[],move:"the retrieval workhorse; cheapest deploy"},
+ {m:"SkyEyeGPT",y:2024,link:"https://arxiv.org/abs/2401.09712",a:"EVA-CLIP ViT",b:"linear projection",c:"box-as-text",llm:"LLaMA2-7B",data:"SkyEye-968k",tasks:["caption","VQA","grounding-HBB","video-caption"],cats:["grounding"],move:"unified tasks incl. aerial video captioning"},
+ {m:"EarthGPT",y:2024,link:"https://arxiv.org/abs/2401.16822",a:"ViT + conv branch",b:"linear projection",c:"box-as-text",llm:"LLaMA2-13B",data:"MMRS-1M (34 datasets)",tasks:["scene-cls","caption","VQA","grounding-HBB","detection"],cats:["grounding","multi-sensor"],move:"first credible multi-sensor MLLM (RGB/SAR/IR)"},
+ {m:"GeoChat",y:2024,link:"https://arxiv.org/abs/2311.15826",a:"CLIP ViT-L, 504px interp",b:"MLP (LLaVA)",c:"oriented bbox-as-text + region-in",llm:"Vicuna-7B + LoRA",data:"GeoChat-Instruct 318k (DOTA/DIOR/FAIR1M…)",tasks:["scene-cls","caption","VQA","region-caption","grounding-OBB"],cats:["grounding"],move:"the reference recipe; OBB grounding"},
+ {m:"LHRS-Bot / Nova",y:2024,link:"https://arxiv.org/abs/2402.02544",a:"CLIP ViT-L",b:"multi-depth vision perceiver",c:"box-as-text",llm:"LLaMA2-7B",data:"LHRS-Align 1.15M (OSM) + Instruct 40k",tasks:["scene-cls","caption","VQA","grounding-HBB"],cats:["grounding"],move:"OSM/VGI data mining + curriculum"},
+ {m:"RS-LLaVA",y:2024,link:"https://www.mdpi.com/2072-4292/16/9/1477",a:"CLIP ViT",b:"MLP",c:"none",llm:"Vicuna-7/13B",data:"RS-Instructions 7k",tasks:["caption","VQA"],cats:[],move:"small curated data, joint caption+QA"},
+ {m:"VHM (H2RSVLM)",y:2024,link:"https://arxiv.org/abs/2403.20213",a:"CLIP ViT-L",b:"MLP",c:"box-as-text",llm:"Vicuna-7B",data:"HqDC-1.4M + specialized instruct ~138k",tasks:["scene-cls","caption","VQA","grounding-HBB","counting","honest-refusal"],cats:["grounding"],move:"honesty: trained to refuse unanswerable questions"},
+ {m:"Popeye",y:2024,link:"https://arxiv.org/abs/2403.03790",a:"CLIP ViT",b:"MLP",c:"HBB+OBB-as-text",llm:"LLaMA-7B",data:"MMShip 81k",tasks:["detection","grounding-OBB","VQA"],cats:["grounding","multi-sensor"],move:"domain specialist: ships across optical+SAR"},
+ {m:"SkySenseGPT",y:2024,link:"https://arxiv.org/abs/2406.10100",a:"CLIP ViT",b:"MLP",c:"box + scene graph in text",llm:"Vicuna-7B",data:"FIT-RS 1.8M",tasks:["scene-cls","VQA","scene-graph","relation-reasoning","grounding-HBB"],cats:["grounding","reasoning"],move:"relation reasoning / scene-graph generation"},
+ {m:"EarthMarker",y:2024,link:"https://arxiv.org/abs/2407.13596",a:"CLIP ViT + prompt encoder",b:"MLP + visual-prompt tokens",c:"region/point-in (visual prompting)",llm:"LLaMA-7B",data:"RSVP-3M",tasks:["region-caption","point-caption","region-cls"],cats:["grounding"],move:"marks-as-input: point/box prompting for RS"},
+ {m:"CDChat",y:2024,link:"https://arxiv.org/abs/2409.16261",a:"CLIP ViT (bi-temporal pair)",b:"MLP, temporal concat",c:"none",llm:"Vicuna-7B",data:"LEVIR-CD + SYSU-CD instructions",tasks:["change-desc","VQA"],cats:["temporal"],move:"dedicated bi-temporal change description"},
+ {m:"TEOChat",y:2024,link:"https://arxiv.org/abs/2410.06234",a:"CLIP ViT per frame",b:"MLP, sequence tokens",c:"box-as-text over time",llm:"LLaMA2-7B",data:"TEOChatlas 554k (xBD, S2Looking, QFabric, fMoW)",tasks:["temporal-QA","change-desc","damage-assessment","grounding-HBB"],cats:["temporal","grounding"],move:"first temporal-sequence EO assistant"},
+ {m:"GeoLLaVA",y:2024,link:"https://arxiv.org/abs/2410.19552",a:"video-VLM encoder",b:"inherited (Video-LLaVA)",c:"none",llm:"7B + LoRA/QLoRA",data:"~100k fMoW-derived temporal pairs",tasks:["temporal-QA","change-desc"],cats:["temporal"],move:"cheap PEFT of video VLMs for change"},
+ {m:"RS-MoE",y:2024,link:"https://arxiv.org/abs/2411.01595",a:"CLIP ViT",b:"instruction router + expert MLPs",c:"none",llm:"small experts (1–3B)",data:"UCM/Sydney/RSICD caption + RSVQA",tasks:["caption","VQA"],cats:[],move:"first MoE RS-VLM; single-GPU trainable"},
+ {m:"GeoGround",y:2024,link:"https://arxiv.org/abs/2411.11904",a:"CLIP ViT",b:"MLP",c:"unified HBB + OBB + Text-Mask (mask as compressed text)",llm:"Vicuna-7B",data:"refGeo 161k",tasks:["grounding-HBB","grounding-OBB","ref-seg","VQA"],cats:["grounding","ref-seg"],move:"masks WITHOUT a decoder — Text-Mask signal compression"},
+ {m:"RingMoGPT",y:2024,link:"https://ieeexplore.ieee.org/abstract/document/10777289",a:"RingMo foundation encoder",b:"Q-Former style",c:"box-as-text",llm:"7B+",data:"large curated corpus (partly proprietary)",tasks:["caption","VQA","detection","change-desc","grounding-HBB"],cats:["grounding","temporal"],move:"GeoFM encoder inside a VLM (rare G11 move)"},
+ {m:"RSUniVLM",y:2024,link:"https://arxiv.org/abs/2412.05679",a:"SigLIP ViT",b:"granularity-oriented MoE",c:"image/region/pixel unified (seg via text-mask style)",llm:"~1B",data:"mixed multi-granularity sets",tasks:["scene-cls","VQA","region-caption","ref-seg","change-detection","grounding-HBB"],cats:["ref-seg","grounding","temporal"],move:"all three granularities in a ~1B model"},
+ {m:"EarthDial",y:2024,link:"https://arxiv.org/abs/2412.15190",a:"InternViT, band-adapted",b:"MLP + temporal concat",c:"box-as-text",llm:"Phi-3 ≈4B",data:"EarthDial-Instruct 11.11M",tasks:["scene-cls","caption","VQA","grounding-HBB","change-desc","temporal-QA"],cats:["multi-sensor","temporal","grounding"],move:"breadth: spectra × time × resolution in dialogue"},
+ {m:"GeoPix",y:2025,link:"https://arxiv.org/abs/2501.06828",a:"CLIP ViT multi-scale",b:"MLP",c:"<SEG> → mask predictor + class-wise memory",llm:"7B",data:"GeoPixInstruct 65k",tasks:["caption","VQA","grounding-HBB","ref-seg","multi-target-seg"],cats:["ref-seg","grounding"],move:"class-wise learnable memory for multi-scale objects"},
+ {m:"GeoPixel",y:2025,link:"https://arxiv.org/abs/2501.13925",a:"CLIP ViT + AnyRes tiling (4K)",b:"MLP",c:"<SEG> token → SAM-style mask decoder",llm:"InternLM-7B",data:"GeoPixelD",tasks:["ref-seg","multi-target-seg","grounded-conversation","VQA"],cats:["ref-seg","agentic"],move:"pixel masks interleaved in dialogue at 4K"},
+ {m:"Falcon (RS)",y:2025,link:"https://arxiv.org/abs/2503.11070",a:"DaViT-style (Florence-2)",b:"seq2seq unified prompts",c:"all-as-text: boxes, polygons, masks",llm:"0.7B seq2seq",data:"Falcon_SFT 78M / 5.6M images",tasks:["scene-cls","caption","VQA","detection","grounding-OBB","ref-seg","change-desc"],cats:["ref-seg","grounding","temporal"],move:"14 tasks at 0.7B — capability density over scale"},
+ {m:"DOFA-CLIP",y:2025,link:"https://arxiv.org/abs/2503.06312",a:"DOFA wavelength-conditioned encoder",b:"shared embedding space (no LLM)",c:"none — retrieval",llm:"—",data:"GeoLangBind-2M",tasks:["zero-shot-cls","retrieval"],cats:["multi-sensor"],move:"text-aligned space for ANY sensor (G12 fix, contrastive side)"},
+ {m:"EagleVision",y:2025,link:"https://arxiv.org/abs/2503.23330",a:"detection backbone + ViT",b:"object queries → LLM tokens",c:"OBB detection + per-object dialogue",llm:"7B",data:"EVAttrs-95k",tasks:["detection","grounding-OBB","object-attribute-desc"],cats:["grounding"],move:"object-level attribute conversations"},
+ {m:"SegEarth-R1",y:2025,link:"https://arxiv.org/abs/2504.09644",a:"hierarchical visual encoder",b:"token compression + description projection",c:"implicit query → mask generator",llm:"7B",data:"EarthReason",tasks:["reasoning-seg","ref-seg"],cats:["ref-seg","reasoning"],move:"reasoning segmentation: 'where could X happen?' → mask"},
+ {m:"EarthGPT-X",y:2025,link:"https://arxiv.org/abs/2504.12795",a:"multi-source ViT",b:"MLP + spatial prompt encoder",c:"point/box/free-form prompting in + region out",llm:"7B",data:"multi-source spatial-prompt instructions",tasks:["scene-cls","VQA","region-caption","grounding-HBB","point-prompting"],cats:["grounding","multi-sensor"],move:"flexible visual prompting across optical/SAR/IR"},
+ {m:"TinyRS-R1",y:2025,link:"https://arxiv.org/abs/2505.12099",a:"SigLIP",b:"MLP",c:"box-as-text",llm:"Qwen2-2B + GRPO",data:"2M RS instructions + CoT + RL",tasks:["scene-cls","VQA","grounding-HBB","reasoning-CoT"],cats:["reasoning"],move:"R1-style reasoning at 2B"},
+ {m:"GeoLLaVA-8K",y:2025,link:"https://arxiv.org/abs/2505.21375",a:"CLIP ViT + token pruning",b:"MLP + anchored compression",c:"box-as-text",llm:"7B",data:"SuperRS-VQA 0.1M + HighRS-VQA 0.7M",tasks:["VQA","grounding-HBB"],cats:["agentic"],move:"native 8K input via background-token pruning"},
+ {m:"EarthMind",y:2025,link:"https://arxiv.org/abs/2506.01667",a:"dual encoders (optical + SAR)",b:"cross-modal fusion + projector",c:"spatial attention prompting → region/pixel",llm:"≈4B",data:"EarthMind corpus + bench",tasks:["scene-cls","VQA","region-caption","ref-seg","change-desc"],cats:["multi-sensor","ref-seg"],move:"multi-granular + real SAR fusion at 4B"},
+ {m:"RemoteReasoner",y:2025,link:"https://arxiv.org/abs/2507.19280",a:"CLIP-class ViT",b:"MLP",c:"task transformation: region/pixel/object from one reasoner",llm:"7B + GRPO",data:"RL on multi-granularity EO tasks",tasks:["reasoning-CoT","grounding-HBB","ref-seg","region-cls"],cats:["reasoning","ref-seg"],move:"one RL policy, many output granularities"},
+ {m:"GeoVLM-R1",y:2025,link:"https://arxiv.org/abs/2509.25026",a:"CLIP-class ViT",b:"MLP",c:"box-as-text",llm:"4–7B + RFT",data:"reward-guided EO task suites",tasks:["scene-cls","VQA","grounding-HBB","change-desc","reasoning-CoT"],cats:["reasoning","temporal"],move:"reinforcement fine-tuning across EO task families"},
+ {m:"RSThinker",y:2025,link:"https://arxiv.org/abs/2509.22221",a:"CLIP-class ViT",b:"MLP",c:"grounded CoT (evidence boxes in reasoning)",llm:"7B",data:"perceptually-grounded CoT pairs",tasks:["VQA","reasoning-CoT","grounding-HBB"],cats:["reasoning"],move:"faithful CoT tied to visual evidence"},
+ {m:"ZoomEarth",y:2025,link:"https://arxiv.org/abs/2511.12267",a:"ViT per crop",b:"MLP",c:"active cropping policy",llm:"7B",data:"UHR zoom-policy data",tasks:["VQA","grounding-HBB","agentic-zoom"],cats:["agentic"],move:"learned active perception for UHR scenes"},
+ {m:"GeoZero",y:2025,link:"https://arxiv.org/abs/2511.22645",a:"CLIP-class ViT",b:"MLP",c:"none (text reasoning)",llm:"7B + RL-zero",data:"RL from scratch, no SFT CoT",tasks:["VQA","reasoning-CoT","scene-cls"],cats:["reasoning"],move:"R1-Zero for geospatial: reasoning from rewards alone"},
+ {m:"GeoViS",y:2025,link:"https://arxiv.org/abs/2512.02715",a:"ViT per crop",b:"MLP",c:"agentic reward-guided search tree",llm:"7B",data:"search trajectories",tasks:["grounding-HBB","agentic-zoom","VQA"],cats:["agentic","grounding"],move:"grounding as a search policy"},
+ {m:"SkyMoE",y:2025,link:"https://arxiv.org/abs/2512.02517",a:"ViT",b:"MoE routing",c:"task-dependent",llm:"MoE 7B+",data:"multi-task interpretation corpora",tasks:["scene-cls","caption","VQA","grounding-HBB"],cats:[],move:"expert-per-task routing for interpretation"},
+ {m:"SegEarth-R2",y:2025,link:"https://arxiv.org/abs/2512.20013",a:"hierarchical encoder + spatial attn supervision",b:"segmentation query mechanism",c:"multi-target masks from language",llm:"7B",data:"LaSeRS",tasks:["ref-seg","reasoning-seg","multi-target-seg"],cats:["ref-seg","reasoning"],move:"granularity + multiplicity + reasoning in one seg model"},
+ {m:"EarthVL",y:2026,link:"https://arxiv.org/abs/2601.02783",a:"ViT",b:"MLP",c:"none",llm:"7B",data:"progressive understanding+generation corpus",tasks:["caption","VQA","generation"],cats:[],move:"adds text→EO-image generation to understanding"},
+ {m:"GeoReason",y:2026,link:"https://arxiv.org/abs/2601.04118",a:"CLIP-class ViT",b:"MLP",c:"none (text reasoning)",llm:"7B + RL",data:"logical-consistency RL",tasks:["VQA","reasoning-CoT"],cats:["reasoning"],move:"penalizes thinking/answer contradictions"},
+ {m:"GeoEyes",y:2026,link:"https://arxiv.org/abs/2602.14201",a:"ViT per focus window",b:"MLP",c:"agentic on-demand focusing + evidence chains",llm:"7B",data:"focus/evidence annotations (UHR)",tasks:["VQA","grounding-HBB","agentic-zoom"],cats:["agentic"],move:"evidence-grounded answers on 10k×10k"},
+ {m:"RemoteShield",y:2026,link:"https://arxiv.org/abs/2604.17243",a:"CLIP-class ViT",b:"MLP",c:"box-as-text",llm:"7B + DPO",data:"semantic-equivalence clusters (clean+perturbed)",tasks:["VQA","scene-cls","caption"],cats:["reasoning"],move:"robustness via preference learning"}
 ];
-const AX={a:"a1",b:"a2",c:"a3"};
-function fill(rows){
+let q="",cat="all";
+function fill(){
+ const rows=ROWS.filter(r=>{
+   if(cat!=="all"&&!r.cats.includes(cat))return false;
+   if(q&&!(r.m+" "+r.a+" "+r.b+" "+r.c+" "+r.data+" "+r.tasks.join(" ")+" "+r.move).toLowerCase().includes(q))return false;
+   return true;});
  document.querySelector("#tbl tbody").innerHTML=rows.map(r=>`
   <tr>
    <td class="model"><a href="${r.link}" target="_blank">${r.m}</a><span class="yr">${r.y}</span></td>
    <td>${r.a}</td><td>${r.b}</td><td>${r.c}</td>
-   <td>${r.llm}</td>
-   <td>${r.sens.split(", ").map(s=>`<span class="pill">${s}</span>`).join("")}</td>
-   <td>${r.res}</td><td>${r.data}</td>
+   <td>${r.llm}</td><td>${r.data}</td>
+   <td>${r.tasks.map(t=>`<span class="pill task">${t}</span>`).join("")}</td>
    <td class="hl">${r.move}</td>
-  </tr>`).join("");
+  </tr>`).join("")||"<tr><td colspan='8' style='color:var(--muted)'>No models match.</td></tr>";
 }
+document.getElementById("q").oninput=e=>{q=e.target.value.toLowerCase();fill();};
+document.querySelectorAll(".chip").forEach(c=>c.onclick=()=>{
+ document.querySelectorAll(".chip").forEach(x=>x.classList.remove("on"));
+ c.classList.add("on");cat=c.dataset.c;fill();});
 let sortKey=null,asc=true;
 document.querySelectorAll("th").forEach((th,i)=>{
- const keys=["m","a","b","c","llm","sens","res","data","move"];
+ const keys=["m","a","b","c","llm","data","tasks","move"];
  th.onclick=()=>{const k=keys[i];asc=(sortKey===k)?!asc:true;sortKey=k;
-  fill([...ROWS].sort((x,y)=>(""+x[k]).localeCompare(""+y[k])*(asc?1:-1)));};
+  ROWS.sort((x,y)=>(""+x[k]).localeCompare(""+y[k])*(asc?1:-1));fill();};
 });
-fill(ROWS);
+fill();
 </script>
 </body>
 </html>

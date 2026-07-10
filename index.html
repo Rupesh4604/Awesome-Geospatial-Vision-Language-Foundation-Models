@@ -292,7 +292,8 @@ async function loadData(){
     const r=await fetch("03-registry/models.json");
     if(r.ok){const j=await r.json();
       MODELS=j.models.map(m=>({name:m.name,year:m.year,org:m.org,params:m.params,paradigm:m.paradigm,
-        modalities:m.modalities,track:m.track,idea:m.idea||m.key_idea,status:m.status,link:m.link}));
+        modalities:m.modalities,track:m.track,idea:m.idea||m.key_idea,status:m.status,link:m.link,
+        tasks:m.tasks,datasets:m.datasets}));
       const s=document.querySelector(".sub");
       if(j.updated) s.textContent=s.textContent.split(" | ")[0]+" | registry updated "+j.updated;}
   }catch(e){/* file:// or offline — fallback stays */}
@@ -333,6 +334,8 @@ function cards(){
     <div class="top"><h3><a href="${m.link}" target="_blank">${m.name}</a></h3><span class="yr">${m.year} · ${m.org}</span></div>
     <div class="meta">${m.params} params · ${m.paradigm}</div>
     <div class="idea">${m.idea}</div>
+    ${m.datasets?`<div class="meta" style="margin-top:2px">📚 ${m.datasets}</div>`:''}
+    ${m.tasks?`<div class="tags" style="margin-top:2px">${m.tasks.map(t=>`<span class="tag" style="color:var(--amber);border-color:#4a3a1d">${t}</span>`).join("")}</div>`:''}
     <div class="tags">
       <span class="badge ${m.status}">${m.status}</span>
       ${m.track==="vlm"?'<span class="badge vlmb">VLM</span>':''}
