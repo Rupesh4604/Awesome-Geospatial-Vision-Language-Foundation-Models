@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-07",
+  "updated": "2026-11-16",
   "note": "Seed data compiled from papers/abstracts — verify against original papers before citing. Community corrections welcome.",
   "benchmarks": [
     {
@@ -7,7 +7,11 @@
       "year": 2025,
       "track": "vision",
       "measures": "Classification, segmentation, regression, detection, instance seg — grouped into capability groups with a standardized adaptation protocol",
-      "leaders": ["TerraMind (multiple capability groups)", "Prithvi-EO 2.0", "Clay"],
+      "leaders": [
+        "TerraMind (multiple capability groups)",
+        "Prithvi-EO 2.0",
+        "Clay"
+      ],
       "finding": "No single GeoFM dominates across tasks; EO-pretrained models beat natural-image models on multispectral tasks, but DINOv3-class baselines stay competitive on RGB.",
       "link": "https://hf.co/papers/2511.15658"
     },
@@ -16,7 +20,9 @@
       "year": 2024,
       "track": "vision",
       "measures": "Global multi-domain dense prediction under a frozen-encoder protocol",
-      "leaders": ["varies by domain; FLORO reports strong results with a small pretraining set"],
+      "leaders": [
+        "varies by domain; FLORO reports strong results with a small pretraining set"
+      ],
       "finding": "Frozen-encoder rankings differ sharply from fine-tuned rankings — adaptation protocol changes who wins.",
       "link": "https://arxiv.org/abs/2412.04204"
     },
@@ -25,7 +31,9 @@
       "year": 2024,
       "track": "vlm",
       "measures": "RS understanding & reasoning, 690 multiple-choice questions across capability levels",
-      "leaders": ["LHRS-Bot-Nova (among open RS models at release)"],
+      "leaders": [
+        "LHRS-Bot-Nova (among open RS models at release)"
+      ],
       "finding": "Small (108 images) — treat as a probe, not a ranking; contamination with common RS training sets is a real risk.",
       "link": "https://arxiv.org/abs/2402.02544"
     },
@@ -34,7 +42,9 @@
       "year": 2025,
       "track": "vlm",
       "measures": "Multi-granular (image/region/pixel) + multi-sensor (optical+SAR) understanding, MC and open-ended",
-      "leaders": ["EarthMind-4B (reported to surpass GPT-4o)"],
+      "leaders": [
+        "EarthMind-4B (reported to surpass GPT-4o)"
+      ],
       "finding": "SAR subsets crush RGB-trained models: e.g. reported grounding-style scores EarthMind 13.6 vs GeoChat 2.6 (SAR) — the sensor gap is bigger than the model gap.",
       "link": "https://arxiv.org/abs/2506.01667"
     },
@@ -43,7 +53,9 @@
       "year": 2025,
       "track": "vlm",
       "measures": "Vision-centric probes (counting, relative position, small objects) built from CLIP-blind pairs",
-      "leaders": ["none — designed to expose failures"],
+      "leaders": [
+        "none — designed to expose failures"
+      ],
       "finding": "RS MLLMs fail systematically on spatial/counting probes; the bottleneck is the CLIP-class encoder (Slot A), not the LLM.",
       "link": "https://arxiv.org/abs/2503.15816"
     },
@@ -52,9 +64,121 @@
       "year": 2024,
       "track": "vlm",
       "measures": "Captioning, VQA, visual grounding on RS imagery",
-      "leaders": ["rotates with each release"],
+      "leaders": [
+        "rotates with each release"
+      ],
       "finding": "Grounding IoU and text metrics diverge — always report both; many instruction sets share source data with these benchmarks (contamination).",
       "link": "https://arxiv.org/abs/2406.12384"
+    },
+    {
+      "name": "GEOBench-VLM",
+      "year": 2024,
+      "track": "vlm",
+      "measures": "31 geospatial sub-tasks for VLMs — scene understanding, counting, detection, localization, segmentation, temporal analysis",
+      "leaders": [
+        "not yet tracked here — see the leaderboard in the official repo"
+      ],
+      "finding": "Became the default OOD check for RS-VLMs in 2026 (e.g. MLRS reports first place on zero-shot detection). Generalist VLMs stay competitive, which is the key point.",
+      "link": "https://arxiv.org/abs/2411.19325"
+    },
+    {
+      "name": "XLRS-Bench",
+      "year": 2025,
+      "track": "vlm",
+      "measures": "Ultra-high-resolution RS imagery (thousands of px per side) — perception and reasoning sub-tasks",
+      "leaders": [
+        "not yet tracked here"
+      ],
+      "finding": "Directly measures G13 (resolution vs context). Token-pruning, zoom-search and program-execution methods (LRS-VQA, ZoomSearch, GeoScope) all target this regime.",
+      "link": "https://arxiv.org/abs/2503.23771"
+    },
+    {
+      "name": "TerraScope-Bench",
+      "year": 2026,
+      "track": "vlm",
+      "measures": "Pixel-grounded geospatial reasoning: coverage %, absolute area, distance, comparative area ranking, boundary relations, building change (3,837 samples)",
+      "leaders": [
+        "TerraScope (authors' report)"
+      ],
+      "finding": "Moves VLM eval from 'is the answer right' to quantities that have to come from masks. New, so it has a single-source result so far.",
+      "link": "https://arxiv.org/abs/2603.19039"
+    },
+    {
+      "name": "Earth-Bench / ThinkGeo",
+      "year": 2025,
+      "track": "agent",
+      "measures": "Tool-augmented agent tasks: multi-step EO workflows over RGB, spectral and product data (Earth-Bench: 248 tasks, 104 tools)",
+      "leaders": [
+        "not yet tracked here"
+      ],
+      "finding": "Agent benchmarks score how tools are chosen and chained, not perception alone. Results depend heavily on the LLM backbone (GPT-5/Gemini vs open models).",
+      "link": "https://arxiv.org/abs/2509.23141"
+    },
+    {
+      "name": "GeoDisaster",
+      "year": 2026,
+      "track": "agent",
+      "measures": "Operational disaster geo-intelligence: 2,921 verified instances, 43 question types, orchestrated agents",
+      "leaders": [
+        "not yet tracked here"
+      ],
+      "finding": "Tests tool-grounded, evidence-backed decisions rather than captioning.",
+      "link": "https://arxiv.org/abs/2606.17246"
+    },
+    {
+      "name": "AESP (answer-grounding consistency)",
+      "year": 2026,
+      "track": "vlm",
+      "measures": "Whether a grounded-VQA model's localized evidence actually supports its textual answer",
+      "leaders": [
+        "none — diagnostic"
+      ],
+      "finding": "Right answers with unsupported grounding are common. Pairs with FaithRS / GeoSolver on G14 faithfulness.",
+      "link": "https://arxiv.org/abs/2610.13636"
+    },
+    {
+      "name": "RRS-10K",
+      "year": 2026,
+      "track": "vlm",
+      "measures": "Rare-scene RS interpretation (10,738 military-related images), multitask",
+      "leaders": [
+        "not yet tracked here"
+      ],
+      "finding": "Existing benchmarks are dominated by common urban/rural scenes, so long-tail performance goes unmeasured.",
+      "link": "https://arxiv.org/abs/2607.24810"
+    },
+    {
+      "name": "RSVideo",
+      "year": 2026,
+      "track": "vlm",
+      "measures": "VLM understanding of remote-sensing video: motion, actions, interactions, scene evolution",
+      "leaders": [
+        "not yet tracked here"
+      ],
+      "finding": "Opens a video axis that single-image and sparse-temporal benchmarks miss.",
+      "link": "https://arxiv.org/abs/2608.02039"
+    },
+    {
+      "name": "VHR-Bench",
+      "year": 2026,
+      "track": "vision",
+      "measures": "GeoFMs transferred to very-high-resolution EO imagery (individual buildings and roads)",
+      "leaders": [
+        "not yet tracked here"
+      ],
+      "finding": "Most GeoFMs pretrain at ≥10 m GSD. This is a direct test of G4 (scale/GSD generalization).",
+      "link": "https://arxiv.org/abs/2611.08003"
+    },
+    {
+      "name": "FairRSFM",
+      "year": 2026,
+      "track": "vision",
+      "measures": "Biome-aware group robustness (14 biomes → 6 macro-groups) under frozen-backbone eval on m-EuroSAT, m-BigEarthNet, m-SA-Crop-Type, MMEarth20K",
+      "leaders": [
+        "Prithvi-EO 2.0, SatMAE, DOFA evaluated"
+      ],
+      "finding": "Aggregate scores hide biome gaps. Prithvi-EO 2.0 gets 90.98% macro-F1 on m-EuroSAT but 83.72% mean worst-group.",
+      "link": "https://arxiv.org/abs/2610.05790"
     }
   ]
 }

@@ -4,43 +4,57 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RS-VLM Comparison Matrix — GeoFM Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap">
+<script>try{if(localStorage.getItem("geofm-theme")==="dark")document.documentElement.classList.add("dark")}catch(e){}</script>
 <style>
-  :root{--bg:#0b1120;--panel:#121a2e;--panel2:#1a2440;--border:#243154;--text:#e2e8f0;--muted:#8b9bbd;--accent:#38bdf8;--accent2:#34d399;--amber:#fbbf24;--violet:#a78bfa}
   *{box-sizing:border-box;margin:0;padding:0}
-  body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;padding-bottom:60px}
-  header{padding:24px 32px;border-bottom:1px solid var(--border)}
-  h1{font-size:22px}h1 span{color:var(--accent)}
+  body{background:var(--bg);color:var(--text);font-family:var(--font-sans);padding-bottom:60px}
   .sub{color:var(--muted);font-size:13px;margin-top:4px;max-width:980px;line-height:1.55}
-  a.back{color:var(--accent);font-size:13px;text-decoration:none}
-  main{max-width:1600px;margin:0 auto;padding:24px 32px}
+  main{max-width:1400px;margin:0 auto;padding:24px 32px}
+  @media(max-width:700px){main{padding:20px 16px}}
   .filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;align-items:center}
   .chip{background:var(--panel2);border:1px solid var(--border);color:var(--muted);border-radius:16px;padding:5px 13px;font-size:12px;cursor:pointer}
-  .chip.on{background:var(--accent);color:#04121f;border-color:var(--accent);font-weight:600}
+  .chip.on{background:var(--accent);color:var(--on-ac);border-color:var(--accent);font-weight:600}
   input[type=search]{background:var(--panel2);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:7px 12px;font-size:13px;width:230px}
-  .tablewrap{overflow-x:auto;border:1px solid var(--border);border-radius:12px}
-  table{border-collapse:collapse;width:100%;min-width:1500px;font-size:12.5px}
-  th{background:var(--panel2);color:var(--text);text-align:left;padding:11px 12px;position:sticky;top:0;white-space:nowrap;cursor:pointer;user-select:none}
-  th .ax{display:block;font-size:9.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase}
+  .tablewrap{overflow:auto;max-height:calc(100vh - 150px);border:1px solid var(--border);border-radius:var(--radius-card);background:var(--panel)}
+  table{border-collapse:collapse;width:100%;min-width:1500px;font-size:13.5px}
+  th{background:var(--panel2);z-index:2;box-shadow:inset 0 -1px 0 var(--border);color:var(--text);text-align:left;padding:11px 12px;position:sticky;top:0;white-space:nowrap;cursor:pointer;user-select:none}
+  th .ax{display:block;font-size:10.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase}
   th.a1 .ax{color:var(--accent)} th.a2 .ax{color:var(--violet)} th.a3 .ax{color:var(--accent2)}
-  td{padding:10px 12px;border-top:1px solid var(--border);vertical-align:top;line-height:1.5;color:var(--muted)}
-  td.model{color:var(--text);font-weight:600;white-space:nowrap}
+  td{padding:12px 14px;border-top:1px solid var(--border);vertical-align:top;line-height:1.55;color:var(--i2)}
+  td.model{color:var(--text);font-weight:600;white-space:nowrap;position:sticky;left:0;background:var(--panel);z-index:1;box-shadow:1px 0 0 var(--border)}
+  th:first-child{position:sticky;left:0;z-index:3;box-shadow:1px 0 0 var(--border),inset 0 -1px 0 var(--border)}
   td.model a{color:var(--text);text-decoration:none}
   td.model a:hover{color:var(--accent)}
-  td.model .yr{display:block;font-weight:400;font-size:11px;color:var(--muted)}
-  .pill{display:inline-block;font-size:10.5px;border:1px solid var(--border);background:var(--panel2);border-radius:9px;padding:1px 8px;margin:1px 2px 1px 0;color:var(--text)}
-  .pill.task{color:var(--accent2);border-color:#1d4a3d}
+  td.model .yr{display:block;font-weight:400;font-size:12px;color:var(--muted)}
+  .pill{display:inline-block;font-size:11.5px;border:1px solid var(--border);background:var(--panel2);border-radius:9px;padding:1px 8px;margin:1px 2px 1px 0;color:var(--text)}
+  .pill.task{color:var(--accent2);border-color:color-mix(in srgb,var(--accent2) 35%,var(--border))}
   .hl{color:var(--amber)}
-  tr:hover td{background:rgba(56,189,248,.04)}
+  tr:hover td{background:color-mix(in srgb,var(--accent) 5%,var(--panel))}
   .note{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px 18px;font-size:13px;color:var(--muted);line-height:1.6;margin-top:18px;max-width:1050px}
   .note b{color:var(--text)}
 </style>
+<link rel="stylesheet" href="theme.css">
+<script src="theme.js" defer></script>
 </head>
 <body>
-<header>
-  <a class="back" href="index.html">← GeoFM Lab dashboard</a>
-  <h1 style="margin-top:8px">⚖️ RS-VLM <span>Comparison Matrix</span></h1>
-  <div class="sub">Every model filed into the three slots — <span style="color:var(--accent)">Slot A: what encodes pixels</span> · <span style="color:var(--violet)">Slot B: what bridges to the LLM</span> · <span style="color:var(--accent2)">Slot C: what grounds the output</span> — plus training data and task coverage. Amber = the model's distinguishing move. Click headers to sort; filter by capability below.</div>
-</header>
+<header class="site-header"><div class="sh-in">
+  <a class="brand" href="index.html">GeoFM <em>Lab</em></a>
+  <nav class="site-links" aria-label="Site">
+    <a href="index.html">Dashboard</a>
+    <a href="anatomy.html">Anatomy</a>
+    <a href="matrix.html" aria-current="page">Matrix</a>
+    <a class="gh" href="https://github.com/Rupesh4604/Awesome-Geospatial-Vision-Language-Foundation-Models" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+  <span data-theme-slot></span>
+</div></header>
+<div class="page-head">
+  <div class="eyebrow">Three-slot breakdown · <span id="rowcount"></span> RS-VLMs</div>
+  <h1>RS-VLM <em>Comparison Matrix</em></h1>
+  <div class="sub">Every model filed into three slots — <span style="color:var(--accent)">Slot A: what encodes pixels</span> · <span style="color:var(--violet)">Slot B: what bridges to the LLM</span> · <span style="color:var(--accent2)">Slot C: what grounds the output</span> — plus training data and tasks. <span style="color:var(--amber)">Amber</span> = the model's distinguishing move. Click a header to sort.</div>
+</div>
 <main>
 <div class="filters">
   <input type="search" id="q" placeholder="Search models, data, tasks…">
@@ -111,7 +125,27 @@ const ROWS=[
  {m:"EarthVL",y:2026,link:"https://arxiv.org/abs/2601.02783",a:"ViT",b:"MLP",c:"none",llm:"7B",data:"progressive understanding+generation corpus",tasks:["caption","VQA","generation"],cats:[],move:"adds text→EO-image generation to understanding"},
  {m:"GeoReason",y:2026,link:"https://arxiv.org/abs/2601.04118",a:"CLIP-class ViT",b:"MLP",c:"none (text reasoning)",llm:"7B + RL",data:"logical-consistency RL",tasks:["VQA","reasoning-CoT"],cats:["reasoning"],move:"penalizes thinking/answer contradictions"},
  {m:"GeoEyes",y:2026,link:"https://arxiv.org/abs/2602.14201",a:"ViT per focus window",b:"MLP",c:"agentic on-demand focusing + evidence chains",llm:"7B",data:"focus/evidence annotations (UHR)",tasks:["VQA","grounding-HBB","agentic-zoom"],cats:["agentic"],move:"evidence-grounded answers on 10k×10k"},
- {m:"RemoteShield",y:2026,link:"https://arxiv.org/abs/2604.17243",a:"CLIP-class ViT",b:"MLP",c:"box-as-text",llm:"7B + DPO",data:"semantic-equivalence clusters (clean+perturbed)",tasks:["VQA","scene-cls","caption"],cats:["reasoning"],move:"robustness via preference learning"}
+ {m:"RemoteShield",y:2026,link:"https://arxiv.org/abs/2604.17243",a:"CLIP-class ViT",b:"MLP",c:"box-as-text",llm:"7B + DPO",data:"semantic-equivalence clusters (clean+perturbed)",tasks:["VQA","scene-cls","caption"],cats:["reasoning"],move:"robustness via preference learning"},
+ // ---- 2025–26 additions (Nov 2026 scan). "—" = not stated in the paper text we checked; corrections welcome ----
+ {m:"DescribeEarth",y:2025,link:"https://arxiv.org/abs/2509.25654",a:"—",b:"—",c:"region-in, detailed description out",llm:"—",data:"Geo-DLC object-level descriptions",tasks:["region-caption","object-attribute-desc"],cats:["grounding"],move:"'describe anything' localized captioning for RS"},
+ {m:"LRS-VQA token pruning",y:2025,link:"https://arxiv.org/abs/2503.07588",a:"dynamic image pyramid",b:"text-guided token pruning",c:"none",llm:"—",data:"LRS-VQA",tasks:["VQA","agentic-zoom"],cats:["agentic"],move:"coarse-to-fine pruning makes gigapixel input affordable"},
+ {m:"Few-shot RLVR (satellite)",y:2025,link:"https://arxiv.org/abs/2507.21745",a:"generalist VLM encoder",b:"—",c:"box-as-text (IoU reward)",llm:"generalist VLM + RLVR",data:"1-shot / few-shot rule-based rewards",tasks:["scene-cls","VQA","grounding-HBB","reasoning-CoT"],cats:["reasoning","grounding"],move:"1-shot RLVR, with no caption supervision"},
+ {m:"Earth-Agent",y:2025,link:"https://arxiv.org/abs/2509.23141",a:"tools (104, via MCP)",b:"tool calls",c:"tool outputs (products, indices)",llm:"GPT-5 / Gemini-2.5 / Qwen3 / DeepSeek-V3.1…",data:"Earth-Bench 248 tasks",tasks:["agentic-zoom","VQA","geo-reasoning"],cats:["agentic","multi-sensor"],move:"agent over RGB + spectral + product data, not pixels alone"},
+ {m:"Geo-R1",y:2025,link:"https://arxiv.org/abs/2509.21976",a:"Qwen2.5-VL ViT",b:"native (Qwen2.5-VL)",c:"box-as-text + masks",llm:"Qwen2.5-VL-3B + GRPO",data:"few-shot VRSBench / NWPU-VHR10 / EarthReason",tasks:["grounding-HBB","detection","ref-seg","reasoning-CoT"],cats:["reasoning","grounding","ref-seg"],move:"reason-then-act RFT for few-shot referring"},
+ {m:"ZoomSearch",y:2025,link:"https://arxiv.org/abs/2511.20460",a:"host VLM encoder",b:"host VLM",c:"adaptive zoom search (training-free)",llm:"any",data:"—",tasks:["VQA","agentic-zoom"],cats:["agentic"],move:"plug-and-play look-where-it-matters for UHR"},
+ {m:"ViLaCD-R1",y:2025,link:"https://arxiv.org/abs/2512.23244",a:"VLM encoder on bi-temporal blocks",b:"—",c:"mask-guided decoder",llm:"VLM + SFT/RL",data:"block-level bi-temporal tasks",tasks:["change-detection","change-desc","reasoning-CoT"],cats:["temporal","reasoning","ref-seg"],move:"RL reasoner + pixel change mask"},
+ {m:"FUSE-RSVLM",y:2025,link:"https://arxiv.org/abs/2512.24022",a:"multi-feature extraction",b:"multi-layer feature fusion",c:"none",llm:"—",data:"—",tasks:["caption","VQA"],cats:[],move:"re-injects visual features against 'visual forgetting'"},
+ {m:"GeoSolver",y:2026,link:"https://arxiv.org/abs/2603.09551",a:"AIMv2-Huge (native res)",b:"native (GLM-4.1V)",c:"box-as-text",llm:"GLM-4.1V-9B + Tree-GRPO",data:"Geo-PRM-2M process labels + Geo-CoT380k",tasks:["scene-cls","caption","VQA","grounding-HBB","detection","counting","reasoning-CoT"],cats:["reasoning","grounding"],move:"token-level process reward model checks each step for faithfulness"},
+ {m:"TerraScope",y:2026,link:"https://arxiv.org/abs/2603.19039",a:"InternVL3 ViT (frozen) — optical + SAR with text-guided token selection",b:"projector (InternVL3)",c:"[SEG] → SAM-2 mask decoder, masks inside CoT",llm:"InternVL3-8B + LoRA",data:"Terra-CoT 1M + 2M RES pairs",tasks:["ref-seg","reasoning-seg","reasoning-CoT","change-desc","VQA"],cats:["ref-seg","reasoning","multi-sensor","temporal"],move:"first pixel-grounded + optical/SAR + bi-temporal reasoner (still CLIP-class encoder, no MSI)"},
+ {m:"RS-HyRe-R1",y:2026,link:"https://arxiv.org/abs/2604.17504",a:"Qwen2.5-VL ViT",b:"native",c:"box-as-text",llm:"Qwen2.5-VL-3B + GRPO",data:"1.6k RL samples",tasks:["grounding-HBB","detection","VQA","reasoning-CoT"],cats:["reasoning","grounding"],move:"hybrid rewards against RL 'perceptual inertia'"},
+ {m:"MLRS (More with Less)",y:2026,link:"https://arxiv.org/abs/2607.15942",a:"InternVL3.5 ViT",b:"native (InternVL3.5)",c:"tool call → SAM3 masks (box-filtered)",llm:"InternVL3.5-8B + GRTO (LoRA r64)",data:"80K curated / 2.3M pool",tasks:["VQA","caption","detection","grounding-HBB","ref-seg","reasoning-CoT"],cats:["reasoning","grounding","ref-seg"],move:"no RS-specific architecture; scale + multi-task tool RL"},
+ {m:"TerraAgent",y:2026,link:"https://arxiv.org/abs/2610.12517",a:"host VLMs",b:"multi-agent",c:"demonstration-grounded evidence",llm:"multi-agent",data:"retrieved demos across GSD/sensors",tasks:["VQA","agentic-zoom","evidence-grounding"],cats:["agentic","temporal"],move:"long-context (multi-tile/temporal) VQA with retrieved demos"},
+ {m:"GeoReason-Seg",y:2026,link:"https://arxiv.org/abs/2610.23416",a:"Sa2VA-init encoder (frozen)",b:"native (Qwen3-VL)",c:"[SEG] → SAM2 decoder",llm:"Qwen3-VL-4B + LoRA (SFT)",data:"EarthReason, RRSIS-D",tasks:["reasoning-seg","ref-seg"],cats:["ref-seg","reasoning"],move:"keeps [SEG] token tied to visual grounding"},
+ {m:"FaithRS",y:2026,link:"https://arxiv.org/abs/2610.18369",a:"Qwen3.5 encoder",b:"native",c:"none (text reasoning)",llm:"Qwen3.5 0.8/4/9B + GSPO",data:"SFHD-43K hallucination diagnoses",tasks:["VQA","reasoning-CoT","honest-refusal"],cats:["reasoning"],move:"hallucination-aware self-reflection reward"},
+ {m:"ReDiS",y:2026,link:"https://arxiv.org/abs/2610.18388",a:"—",b:"—",c:"box-as-text",llm:"MLLM + self-evolution",data:"self-generated, diagnosis-filtered",tasks:["VQA","grounding-HBB","reasoning-CoT"],cats:["reasoning","grounding"],move:"separates reasoning exploration from diagnosis"},
+ {m:"FloodVLM-Pix",y:2026,link:"https://arxiv.org/abs/2610.23377",a:"—",b:"—",c:"pixel flood masks",llm:"—",data:"131.2k flood patches",tasks:["VQA","caption","ref-seg"],cats:["ref-seg"],move:"domain VLM: language + pixel flood understanding"},
+ {m:"GeoScope",y:2026,link:"https://arxiv.org/abs/2611.12699",a:"host VLM",b:"program execution",c:"programmatic counting/relations",llm:"8 open VLMs tested",data:"—",tasks:["VQA","counting","agentic-zoom"],cats:["agentic"],move:"measures a ~5-object 'counting horizon' and works around it"},
+ {m:"DisasterAgent",y:2026,link:"https://arxiv.org/abs/2611.13776",a:"perception tools",b:"agent",c:"verifiable evidence in report",llm:"VLM agent",data:"—",tasks:["damage-assessment","caption","evidence-grounding"],cats:["agentic","temporal"],move:"evidence-backed disaster reports"}
 ];
 let q="",cat="all";
 function fill(){
@@ -128,6 +162,7 @@ function fill(){
    <td class="hl">${r.move}</td>
   </tr>`).join("")||"<tr><td colspan='8' style='color:var(--muted)'>No models match.</td></tr>";
 }
+const rc=document.getElementById("rowcount");if(rc)rc.textContent=ROWS.length;
 document.getElementById("q").oninput=e=>{q=e.target.value.toLowerCase();fill();};
 document.querySelectorAll(".chip").forEach(c=>c.onclick=()=>{
  document.querySelectorAll(".chip").forEach(x=>x.classList.remove("on"));

@@ -4,114 +4,181 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GeoFM Lab — Geospatial Foundation Models</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap">
+<script>try{if(localStorage.getItem("geofm-theme")==="dark")document.documentElement.classList.add("dark")}catch(e){}</script>
 <style>
-  :root{
-    --bg:#0b1120; --panel:#121a2e; --panel2:#1a2440; --border:#243154;
-    --text:#e2e8f0; --muted:#8b9bbd; --accent:#38bdf8; --accent2:#34d399;
-    --amber:#fbbf24; --rose:#fb7185; --violet:#a78bfa;
-  }
   *{box-sizing:border-box;margin:0;padding:0}
-  body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}
-  header{padding:24px 32px 0;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px}
-  h1{font-size:22px;font-weight:700}
-  h1 span{color:var(--accent)}
-  .sub{color:var(--muted);font-size:13px;margin-top:4px}
-  .extlinks{display:flex;gap:10px;flex-wrap:wrap}
-  .extlinks a{color:var(--accent);font-size:13px;text-decoration:none;border:1px solid var(--border);border-radius:8px;padding:7px 13px;background:var(--panel)}
-  .extlinks a:hover{border-color:var(--accent)}
-  nav{display:flex;gap:4px;padding:16px 32px 0;border-bottom:1px solid var(--border);flex-wrap:wrap}
-  nav button{background:none;border:none;color:var(--muted);padding:10px 16px;font-size:14px;cursor:pointer;border-bottom:2px solid transparent}
-  nav button.active{color:var(--accent);border-bottom-color:var(--accent)}
-  nav button:hover{color:var(--text)}
-  main{padding:24px 32px;max-width:1400px;margin:0 auto}
+  body{background:var(--bg);color:var(--text);font-family:var(--font-sans);min-height:100vh;line-height:1.5}
+  .tabs{position:sticky;top:60px;z-index:40;background:var(--hdr-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+  .tabs .in{max-width:1400px;margin:0 auto;padding:0 32px;display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+  .tabs .in::-webkit-scrollbar{display:none}
+  .tabs a{color:var(--muted);padding:13px 14px;font-size:14.5px;text-decoration:none;white-space:nowrap;border-bottom:2px solid transparent;transition:color .2s,border-color .2s}
+  .tabs a:hover{color:var(--text)}
+  .tabs a[aria-selected="true"]{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+  .tabs .cnt{font-size:11.5px;color:var(--muted);margin-left:6px;font-weight:400}
+  main{padding:28px 32px 64px;max-width:1400px;margin:0 auto}
   .tab{display:none}.tab.active{display:block}
-  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px}
-  .stat{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
-  .stat .n{font-size:26px;font-weight:700;color:var(--accent)}
-  .stat .l{font-size:12px;color:var(--muted);margin-top:2px}
-  .filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;align-items:center}
-  .chip{background:var(--panel2);border:1px solid var(--border);color:var(--muted);border-radius:16px;padding:5px 13px;font-size:12px;cursor:pointer}
-  .chip.on{background:var(--accent);color:#04121f;border-color:var(--accent);font-weight:600}
-  input[type=search]{background:var(--panel2);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:7px 12px;font-size:13px;width:220px}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px}
-  .card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:8px}
-  .card .top{display:flex;justify-content:space-between;align-items:baseline}
-  .card h3{font-size:16px}
+  .stats{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;margin-bottom:24px}
+  .stat{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-card);padding:16px 18px}
+  .stat .n{font-size:30px;font-weight:600;color:var(--accent);letter-spacing:-.02em;line-height:1.1}
+  .stat .l{font-size:13px;color:var(--muted);margin-top:4px}
+  .filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;align-items:center}
+  .filters .sep{width:1px;height:22px;background:var(--border);margin:0 6px}
+  .chip{border:1px solid var(--border);cursor:pointer}
+  input[type=search]{border:1px solid var(--border);color:var(--text);width:240px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-card);padding:18px;display:flex;flex-direction:column;gap:9px;transition:transform .3s cubic-bezier(.2,.7,.2,1),border-color .3s,box-shadow .3s}
+  .card:hover{transform:translateY(-3px);border-color:var(--accent);box-shadow:var(--shadow-lift)}
+  .card .top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+  .card h3{font-size:17px;font-weight:600}
   .card h3 a{color:var(--text);text-decoration:none}
   .card h3 a:hover{color:var(--accent)}
-  .yr{color:var(--muted);font-size:12px}
-  .meta{font-size:12px;color:var(--muted)}
-  .idea{font-size:13px;line-height:1.5}
+  .yr{color:var(--muted);font-size:12.5px;text-align:right}
+  .meta{font-size:13px;color:var(--muted)}
+  .idea{font-size:14.5px;line-height:1.55;color:var(--i2)}
   .tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:auto}
-  .tag{font-size:10.5px;padding:2px 8px;border-radius:10px;background:var(--panel2);border:1px solid var(--border);color:var(--muted)}
-  .tag.mod{color:var(--accent2);border-color:#1d4a3d}
-  .tag.par{color:var(--violet);border-color:#3d3260}
-  .badge{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
-  .badge.production{background:#0c3a2a;color:var(--accent2)}
-  .badge.frontier{background:#3a2a0c;color:var(--amber)}
-  .badge.foundational{background:#1e293b;color:var(--muted)}
-  .badge.vlmb{background:#2a1f3d;color:var(--violet)}
-  .timeline{margin:26px 0 8px;border-top:1px solid var(--border);padding-top:18px}
-  .tl-row{display:flex;gap:8px;align-items:flex-start;margin-bottom:10px}
-  .tl-year{width:52px;color:var(--accent);font-weight:700;font-size:13px;flex-shrink:0;padding-top:3px}
+  .tag{font-size:11.5px;padding:2px 9px;border-radius:6px;background:var(--panel2);border:1px solid var(--border);color:var(--muted)}
+  .tag.task{color:var(--amber);border-color:color-mix(in srgb,var(--amber) 35%,var(--border))}
+  .tag.mod{color:var(--accent2);border-color:color-mix(in srgb,var(--accent2) 35%,var(--border))}
+  .tag.par{color:var(--violet);border-color:color-mix(in srgb,var(--violet) 35%,var(--border))}
+  .badge{font-size:10.5px;padding:3px 8px;border-radius:6px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+  .badge.production{background:color-mix(in srgb,var(--accent2) 14%,transparent);color:var(--accent2)}
+  .badge.frontier{background:color-mix(in srgb,var(--amber) 14%,transparent);color:var(--amber)}
+  .badge.foundational{background:var(--panel2);color:var(--muted)}
+  .badge.vlmb{background:color-mix(in srgb,var(--violet) 14%,transparent);color:var(--violet)}
+  .badge.agentb{background:color-mix(in srgb,var(--rose) 12%,transparent);color:var(--rose)}
+  .badge.conv{background:var(--tint);color:var(--acink)}
+  .timeline{margin:36px 0 8px;border-top:1px solid var(--border);padding-top:24px}
+  .timeline h2{font-size:26px;margin-bottom:16px}
+  .tl-row{display:flex;gap:12px;align-items:flex-start;margin-bottom:12px}
+  .tl-year{width:52px;color:var(--accent);font-weight:700;font-size:14px;flex-shrink:0;padding-top:4px}
   .tl-items{display:flex;flex-wrap:wrap;gap:6px}
-  .tl-item{font-size:12px;background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:3px 9px;color:var(--text)}
-  .phase{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:14px}
-  .phase-head{display:flex;justify-content:space-between;align-items:center;cursor:pointer}
-  .phase h3{font-size:15px}
-  .phase .pct{font-size:12px;color:var(--muted)}
-  .bar{height:5px;background:var(--panel2);border-radius:3px;margin:10px 0;overflow:hidden}
-  .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:3px;transition:width .3s}
-  .items{margin-top:6px}
-  .item{display:flex;gap:10px;align-items:flex-start;padding:7px 4px;border-radius:6px;font-size:13.5px;cursor:pointer;line-height:1.45}
+  .tl-item{font-size:12.5px;background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:3px 9px;color:var(--text)}
+  /* roadmap */
+  .rm-top{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:16px;margin-bottom:22px}
+  .rm-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-card);padding:20px 22px}
+  .rm-card .big{font-size:40px;font-weight:600;letter-spacing:-.03em;color:var(--accent);line-height:1;margin-bottom:12px}
+  .rm-card .big small{font-size:15px;color:var(--muted);font-weight:400;letter-spacing:0;margin-left:6px}
+  .rm-card .lbl{font-family:var(--font-mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+  .tracks{display:flex;gap:16px;flex-wrap:wrap;margin-top:14px;font-size:13px;color:var(--muted)}
+  .tracks b{color:var(--text);font-weight:600}
+  .next-btn{display:block;width:100%;text-align:left;background:var(--tint);color:var(--acink);border:1px solid color-mix(in srgb,var(--accent) 30%,var(--border));border-radius:12px;padding:12px 14px;font:inherit;font-size:14.5px;line-height:1.45;cursor:pointer;margin-top:4px}
+  .next-btn:hover{border-color:var(--accent)}
+  .next-btn .ph{display:block;font-size:12px;opacity:.8;margin-bottom:2px}
+  .track-lbl{font-family:var(--font-mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:26px 0 10px}
+  .track-lbl.first{margin-top:0}
+  .phase{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-card);margin-bottom:10px;overflow:hidden}
+  .phase-head{display:flex;align-items:center;gap:14px;width:100%;background:none;border:0;color:inherit;font:inherit;text-align:left;cursor:pointer;padding:16px 20px}
+  .phase-head:hover h3{color:var(--accent)}
+  .phase h3{font-size:16px;font-weight:600;flex:1;transition:color .2s}
+  .phase h3 .w{font-size:13px;color:var(--muted);font-weight:400;margin-left:6px}
+  .phase .pct{font-size:13px;color:var(--muted);white-space:nowrap}
+  .ring{--p:0;width:34px;height:34px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:10.5px;font-weight:700;color:var(--accent);
+    background:radial-gradient(closest-side,var(--panel) 76%,transparent 78%),conic-gradient(var(--accent) calc(var(--p)*1%),var(--panel2) 0)}
+  .phase.complete .ring{color:var(--on-ac);background:var(--accent)}
+  .chev{width:8px;height:8px;border-right:1.5px solid var(--muted);border-bottom:1.5px solid var(--muted);transform:rotate(45deg) translateY(-2px);transition:transform .25s;flex:none}
+  .phase.open .chev{transform:rotate(225deg) translateY(-1px)}
+  .items{display:none;padding:0 16px 14px 68px}
+  .phase.open .items{display:block}
+  .bar{height:6px;background:var(--panel2);border-radius:3px;overflow:hidden}
+  .bar i{display:block;height:100%;background:var(--accent);border-radius:3px;transition:width .3s}
+  .item{display:flex;gap:10px;align-items:flex-start;padding:8px 8px;border-radius:8px;font-size:14.5px;cursor:pointer;line-height:1.5;color:var(--i2)}
   .item:hover{background:var(--panel2)}
-  .item input{margin-top:3px;accent-color:var(--accent2);cursor:pointer}
+  .item input{margin-top:4px;accent-color:var(--accent);cursor:pointer;width:16px;height:16px;flex:none}
   .item.done label{color:var(--muted);text-decoration:line-through}
+  .item.next{background:var(--tint);color:var(--acink)}
+  .item .nx{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;background:var(--accent);color:var(--on-ac);border-radius:5px;padding:1px 6px;margin-right:6px;white-space:nowrap}
   .item label{cursor:pointer}
   .item .k{color:var(--accent);font-weight:600}
-  .gap{background:var(--panel);border:1px solid var(--border);border-left:3px solid var(--rose);border-radius:10px;padding:15px 18px;margin-bottom:12px}
-  .gap h3{font-size:14.5px;margin-bottom:5px}
-  .gap p{font-size:13px;color:var(--muted);line-height:1.55}
-  .gap .opp{color:var(--accent2);font-size:13px;margin-top:6px;display:block}
-  .flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
-  .step{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:18px}
-  .step .num{width:28px;height:28px;border-radius:50%;background:var(--accent);color:#04121f;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:14px;margin-bottom:10px}
-  .step h3{font-size:14.5px;margin-bottom:6px}
-  .step p{font-size:12.5px;color:var(--muted);line-height:1.55}
-  .step code{background:var(--panel2);padding:1px 6px;border-radius:4px;font-size:11.5px;color:var(--accent)}
-  .note{background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:14px 18px;font-size:13px;color:var(--muted);line-height:1.6;margin-top:18px}
+  /* gaps */
+  .thesis{background:var(--panel);border:1px solid color-mix(in srgb,var(--accent) 40%,var(--border));border-radius:var(--radius-card);padding:24px 26px 24px 30px;margin-bottom:28px;box-shadow:var(--shadow-lift);position:relative;overflow:hidden}
+  .thesis::before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:var(--accent)}
+  .thesis h3{font-family:var(--font-display);font-weight:var(--display-weight);letter-spacing:var(--display-tracking);font-size:30px;line-height:1.1;margin:8px 0 10px}
+  html.dark .thesis h3{font-size:22px}
+  .thesis h3 em{color:var(--accent)}
+  .thesis p{font-size:15px;line-height:1.65;color:var(--i2);max-width:92ch}
+  .thesis p + p{margin-top:8px}
+  .thesis .links{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+  .thesis .links a{font-size:13.5px;text-decoration:none;color:var(--acink);background:var(--tint);border-radius:999px;padding:7px 13px}
+  .thesis .links a:hover{background:color-mix(in srgb,var(--accent) 22%,transparent)}
+  .gap-group{margin-bottom:30px}
+  .gap-group > h3{font-family:var(--font-mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500;margin-bottom:12px}
+  .gap-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(440px,1fr));gap:14px}
+  .gap{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-card);padding:18px 20px;scroll-margin-top:130px;transition:border-color .3s,box-shadow .3s}
+  .gap.conv{border-color:color-mix(in srgb,var(--accent) 45%,var(--border))}
+  .gap:target{border-color:var(--accent);box-shadow:var(--shadow-lift)}
+  .gap .gh{display:flex;align-items:center;gap:10px;margin-bottom:4px;flex-wrap:wrap}
+  .gap .gid{font-family:var(--font-mono);font-size:12px;font-weight:500;color:var(--acink);background:var(--tint);border-radius:6px;padding:2px 8px}
+  .gap.vlm .gid{color:var(--violet);background:color-mix(in srgb,var(--violet) 12%,transparent)}
+  .gap h4{font-size:16px;font-weight:600;flex:1;min-width:180px}
+  .gap .lbl{font-family:var(--font-mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin:12px 0 4px}
+  .gap p{font-size:14px;color:var(--i2);line-height:1.6}
+  .gap .opp{font-size:14px;line-height:1.6;color:var(--text);border-left:2px solid var(--accent2);padding-left:10px}
+  /* workflow */
+  .flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+  .step{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-card);padding:20px}
+  .step .num{width:30px;height:30px;border-radius:50%;background:var(--accent);color:var(--on-ac);font-weight:700;display:flex;align-items:center;justify-content:center;font-size:14px;margin-bottom:12px}
+  .step h3{font-size:16px;font-weight:600;margin-bottom:6px}
+  .step p{font-size:14.5px;color:var(--i2);line-height:1.6}
+  .step code,.tab-head code{background:var(--panel2);padding:1px 6px;border-radius:4px;font-size:12.5px;color:var(--accent)}
+  .note{background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius-card);padding:16px 20px;color:var(--muted);margin-top:18px}
   .note b{color:var(--text)}
   /* benchmarks */
-  .bench{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:14px}
-  .bench .bh{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px}
-  .bench h3{font-size:15px}
+  .bgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(420px,1fr));gap:14px}
+  .bench{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius-card);padding:20px 22px;display:flex;flex-direction:column;gap:8px}
+  .bench .bh{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+  .bench h3{font-family:var(--font-display);font-weight:var(--display-weight);letter-spacing:var(--display-tracking);font-size:25px;line-height:1.1}
+  html.dark .bench h3{font-size:18px;font-weight:600}
   .bench h3 a{color:var(--text);text-decoration:none}
   .bench h3 a:hover{color:var(--accent)}
-  .bench .measures{font-size:12.5px;color:var(--muted);margin:7px 0;line-height:1.55}
-  .bench .lead{font-size:13px;margin:4px 0}
+  .bench .yr{font-family:var(--font-sans);font-size:13px;margin-left:6px;letter-spacing:0}
+  .bench .measures{font-size:14px;color:var(--i2);line-height:1.6}
+  .bench .lead{font-size:13.5px;color:var(--muted)}
   .bench .lead b{color:var(--accent2);font-weight:600}
-  .bench .find{font-size:12.5px;color:var(--muted);line-height:1.55;border-left:2px solid var(--amber);padding-left:10px;margin-top:8px}
+  .bench .lead b.none{color:var(--muted);font-weight:400;font-style:italic}
+  .bench .find{font-size:14px;color:var(--i2);line-height:1.6;border-left:2px solid var(--amber);padding-left:12px;margin-top:auto}
+  @media(max-width:1100px){.stats{grid-template-columns:repeat(3,minmax(0,1fr))}.rm-top{grid-template-columns:1fr}}
+  @media(max-width:700px){
+    main{padding:20px 16px 48px}
+    .tabs{top:56px}.tabs .in{padding:0 8px}
+    .stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    .stat{padding:12px 14px}.stat .n{font-size:24px}
+    .grid,.gap-grid,.bgrid{grid-template-columns:minmax(0,1fr)}
+    input[type=search]{width:100%}
+    .filters .sep{display:none}
+    .items{padding:0 8px 12px 8px}
+    .phase-head{padding:14px}
+    .thesis{padding:20px 18px 20px 22px}
+  }
 </style>
+<link rel="stylesheet" href="theme.css">
+<script src="theme.js" defer></script>
 </head>
 <body>
-<header>
-  <div>
-    <h1>🛰️ GeoFM <span>Lab</span></h1>
-    <div class="sub">Geospatial Vision + Vision-Language Foundation Models — landscape · roadmap · gaps · benchmarks · workflow</div>
-  </div>
-  <div class="extlinks">
-    <a href="anatomy.html">🔬 RS-VLM Anatomy</a>
-    <a href="matrix.html">⚖️ Comparison Matrix</a>
-    <a href="https://github.com/Rupesh4604/Awesome-Geospatial-Vision-Language-Foundation-Models" target="_blank">★ GitHub</a>
-  </div>
-</header>
-<nav>
-  <button class="active" data-tab="landscape">Landscape</button>
-  <button data-tab="roadmap">Learning Roadmap</button>
-  <button data-tab="gaps">Next-Gen Gap Map</button>
-  <button data-tab="bench">Benchmarks</button>
-  <button data-tab="workflow">Workflow</button>
-</nav>
+<header class="site-header"><div class="sh-in">
+  <a class="brand" href="index.html">GeoFM <em>Lab</em></a>
+  <nav class="site-links" aria-label="Site">
+    <a href="index.html" aria-current="page">Dashboard</a>
+    <a href="anatomy.html">Anatomy</a>
+    <a href="matrix.html">Matrix</a>
+    <a class="gh" href="https://github.com/Rupesh4604/Awesome-Geospatial-Vision-Language-Foundation-Models" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+  <span data-theme-slot></span>
+</div></header>
+<div class="page-head">
+  <div class="eyebrow">Geospatial vision + vision-language foundation models</div>
+  <h1>The GeoFM landscape, <em>mapped</em>.</h1>
+  <div class="sub">Models, a learning roadmap, open problems and benchmarks for Earth-observation foundation models and RS-VLMs. <span class="upd" id="upd"></span></div>
+</div>
+<nav class="tabs" aria-label="Dashboard sections"><div class="in" role="tablist">
+  <a href="#landscape" role="tab" data-tab="landscape" aria-selected="true">Landscape</a>
+  <a href="#roadmap" role="tab" data-tab="roadmap">Learning Roadmap<span class="cnt" id="rmcnt"></span></a>
+  <a href="#gaps" role="tab" data-tab="gaps">Gap Map</a>
+  <a href="#bench" role="tab" data-tab="bench">Benchmarks</a>
+  <a href="#workflow" role="tab" data-tab="workflow">Workflow</a>
+</div></nav>
 <main>
 
 <section id="landscape" class="tab active">
@@ -122,11 +189,11 @@
     <span class="chip" data-f="production">Production-ready</span>
     <span class="chip" data-f="frontier">Frontier (2025–26)</span>
     <span class="chip" data-f="foundational">Foundational</span>
-    <span style="width:14px"></span>
+    <span class="sep"></span>
     <span class="chip on" data-t="all">Both tracks</span>
     <span class="chip" data-t="vision">Vision FM</span>
     <span class="chip" data-t="vlm">Vision-Language</span>
-    <span style="width:14px"></span>
+    <span class="sep"></span>
     <span class="chip" data-m="SAR">SAR</span>
     <span class="chip" data-m="MSI">Multispectral</span>
     <span class="chip" data-m="Temporal">Temporal</span>
@@ -137,21 +204,29 @@
 </section>
 
 <section id="roadmap" class="tab">
-  <div class="note" style="margin:0 0 16px"><b>9 phases, ~10–16 weeks part-time.</b> Phases 5b–5d are the Vision-Language track (see the <a href="anatomy.html" style="color:var(--accent)">Anatomy explainer</a> first). Checkboxes persist in this browser. Full detail in <b>01-roadmap/roadmap.md</b>.</div>
+  <div class="tab-head"><h2>Learning roadmap</h2><p>Nine phases, about 10–16 weeks part-time: the vision track, then the vision-language track (start with the <a href="anatomy.html">Anatomy explainer</a>), then convergence. Ticks are saved in this browser. Full detail in <code>01-roadmap/roadmap.md</code>.</p></div>
+  <div class="rm-top" id="rmtop"></div>
   <div id="phases"></div>
 </section>
 
 <section id="gaps" class="tab">
-  <div class="note" style="margin:0 0 16px"><b>14 open problems</b> seeded from GEO-Bench-2, PANGAEA, RSMMVP and 2025–26 literature. G11–G14 are VLM-specific. Working file: <b>04-next-gen/gap-map.md</b>. When 2–3 gaps intersect → next-gen design candidate.</div>
+  <div class="tab-head"><h2>Next-gen gap map</h2><p>14 open problems from GEO-Bench-2, PANGAEA, RSMMVP and the 2025–26 literature (evidence refreshed Nov 2026). Where two or three gaps meet, there's a design candidate. Working file: <code>04-next-gen/gap-map.md</code>.</p></div>
   <div id="gaplist"></div>
 </section>
 
 <section id="bench" class="tab">
-  <div class="note" style="margin:0 0 16px"><b>Benchmark tracker.</b> Seed data compiled from papers — verify before citing; extend via <b>03-registry/leaderboard.json</b>. The meta-lesson from "No One Knows the SOTA in GeoFMs" (2026): the adaptation protocol changes who wins, so read every leaderboard with its protocol attached.</div>
-  <div id="benchlist"></div>
+  <div class="tab-head"><h2>Benchmarks</h2><p>Seed data compiled from papers; verify before citing and extend via <code>03-registry/leaderboard.json</code>. The adaptation protocol changes who wins, so read every leaderboard with its protocol attached. Eval tooling: <a href="https://github.com/ServiceNow/geo-bench" target="_blank">GEO-Bench</a> · <a href="https://github.com/VMarsocci/pangaea-bench" target="_blank">PANGAEA</a> · <a href="https://github.com/torchgeo/terratorch" target="_blank">TerraTorch</a> · <a href="https://github.com/The-AI-Alliance/GEO-Bench-VLM" target="_blank">GEOBench-VLM</a> · <a href="https://github.com/open-compass/VLMEvalKit" target="_blank">VLMEvalKit</a> · <a href="https://github.com/EvolvingLMMs-Lab/lmms-eval" target="_blank">lmms-eval</a>.</p></div>
+  <div class="filters" id="bfilters">
+    <span class="chip on" data-b="all">All</span>
+    <span class="chip" data-b="vision">Vision FM</span>
+    <span class="chip" data-b="vlm">VLM</span>
+    <span class="chip" data-b="agent">Agents</span>
+  </div>
+  <div class="bgrid" id="benchlist"></div>
 </section>
 
 <section id="workflow" class="tab">
+  <div class="tab-head"><h2>Workflow</h2><p>How this repo is meant to be used, from learning to a prototype.</p></div>
   <div class="flow">
     <div class="step"><div class="num">1</div><h3>Learn</h3><p>Work through the roadmap phases. Vision track (1–5) → VLM track (5b–5d) → convergence (6). Start VLM concepts at the <a href="anatomy.html" style="color:var(--accent)">Anatomy page</a>.</p></div>
     <div class="step"><div class="num">2</div><h3>Dissect papers</h3><p>Per key paper: copy <code>02-papers/TEMPLATE.md</code>, fill the 5 layers. For VLMs, also fill the model's row in the <a href="matrix.html" style="color:var(--accent)">Comparison Matrix</a> — predict the three slots from the abstract, then correct after reading.</p></div>
@@ -160,7 +235,8 @@
     <div class="step"><div class="num">5</div><h3>Design</h3><p>Draft an architecture spec targeting 2–3 gaps. Design review with Claude's <code>rs-dl-architect</code> skill: tokenization, objective, eval plan.</p></div>
     <div class="step"><div class="num">6</div><h3>Prototype & evaluate</h3><p>Smallest viable version. Vision: GEO-Bench-2 subset, linear probe + LoRA. VLM: LHRS-Bench + RSMMVP probes + grounding IoU, against a frontier generalist baseline.</p></div>
   </div>
-  <div class="note"><b>Evaluation discipline:</b> linear-probe before fine-tune · few-shot scaling at 100/1k/10k labels · cross-<i>region</i> hold-outs · DINOv3 baseline for vision, GPT-4o-class baseline for VLMs · report grounding IoU separately from text metrics · probe hallucination explicitly.</div>
+  <div class="note"><b>Evaluation discipline:</b> linear-probe before fine-tune · few-shot scaling at 100/1k/10k labels · cross-<i>region</i> hold-outs · DINOv3 baseline for vision, GPT-4o-class baseline for VLMs · report grounding IoU separately from text metrics · probe hallucination explicitly · for reasoning models, check answer–grounding consistency (AESP), not just accuracy.</div>
+  <div class="note"><b>Companion collections:</b> <a href="https://github.com/IRIP-BUAA/A-Survey-on-Remote-Sensing-Foundation-Models-From-Vision-to-Multimodality" target="_blank" style="color:var(--accent)">RSFM survey: vision → multimodality (IRIP-BUAA)</a> · <a href="https://github.com/Jack-bo1220/Awesome-Remote-Sensing-Foundation-Models" target="_blank" style="color:var(--accent)">Awesome-RSFMs</a> · <a href="https://github.com/ZhanYang-nwpu/Awesome-Remote-Sensing-Multimodal-Large-Language-Model" target="_blank" style="color:var(--accent)">RS-MLLM survey</a> · <a href="https://github.com/Chen-Yang-Liu/Awesome-RS-SpatioTemporal-VLMs" target="_blank" style="color:var(--accent)">Spatio-temporal RS-VLMs</a> · <a href="https://github.com/VisionXLab/Awesome-RS-VL-Data" target="_blank" style="color:var(--accent)">RS-VL datasets</a> · <a href="https://github.com/satellite-image-deep-learning/techniques" target="_blank" style="color:var(--accent)">satellite-image-deep-learning</a>. Full list in the README.</div>
 </section>
 </main>
 
@@ -189,6 +265,11 @@ const FALLBACK_MODELS=[
  {name:"GeoSANE",year:2026,org:"HSG/Michigan",params:"n/a",paradigm:"Weight generation",modalities:["Meta"],idea:"Learns from model *weights*, not data — generates task networks from existing FMs.",status:"frontier",link:"https://arxiv.org/abs/2603.23408"},
  {name:"GeoMeld-FM",year:2026,org:"IITB/MBZUAI",params:"300M",paradigm:"MAE+JEPA+CLIP",modalities:["MSI","SAR","Text"],idea:"Spatially-aligned multimodal dataset + agentic captions; JEPA + contrastive hybrid objective.",status:"frontier",link:"https://arxiv.org/abs/2604.10591"},
  {name:"FLORO",year:2026,org:"KAUST",params:"300M",paradigm:"MAE",modalities:["MSI","SAR","RGB"],idea:"Availability-aware inputs adapt to varying sensor configs; strong on PANGAEA with small pretraining set.",status:"frontier",link:"https://arxiv.org/abs/2605.28174"},
+ {name:"FlexiMo",year:2025,org:"AIR-CAS/Southeast/HZDR",params:"86M",paradigm:"Resolution-flexible adaptation",modalities:["MSI","RGB"],idea:"Parameter-free resolution-aware patch-embed recalibration on DOFA — arbitrary GSD / patch size.",status:"frontier",link:"https://arxiv.org/abs/2503.23844"},
+ {name:"AgriFM",year:2025,org:"HKU/Beihang/Wuhan",params:"—",paradigm:"Supervised spatiotemporal",modalities:["MSI","Temporal"],idea:"Agriculture FM on 25M MODIS/Landsat/S2 images; multi-scale phenology for crop mapping.",status:"frontier",link:"https://arxiv.org/abs/2505.21357"},
+ {name:"GeoLink",year:2025,org:"PKU/CASIA/EPFL",params:"300M",paradigm:"Contrastive image–OSM graph",modalities:["RGB","Vector"],idea:"OpenStreetMap as pretraining signal and downstream fusion input (NeurIPS 2025).",status:"frontier",link:"https://arxiv.org/abs/2509.26016"},
+ {name:"RAMEN",year:2025,org:"Paris Cité/Inria/INRAE",params:"98.5M",paradigm:"MAE, resolution-adjustable",modalities:["MSI","SAR","RGB","DEM"],idea:"Spatial resolution as a controllable output parameter; sensor-agnostic shared latent.",status:"frontier",link:"https://arxiv.org/abs/2512.05025"},
+ {name:"MaRS",year:2026,org:"Wuhan Univ",params:"—",paradigm:"Cross-granularity contrastive",modalities:["RGB","SAR"],idea:"VHR SAR–optical FM on MaRS-16M (0.35 m) with meta-modality attention (AAAI 2026).",status:"frontier",link:"https://ojs.aaai.org/index.php/AAAI/article/view/38153"},
  {name:"RSGPT",year:2023,org:"Academic",params:"7B",paradigm:"VLM instruct",modalities:["RGB","Text"],track:"vlm",idea:"Pioneer RS conversational model — captioning + VQA via instruction tuning on RSICap.",status:"foundational",link:"https://arxiv.org/abs/2307.15266"},
  {name:"GeoChat",year:2024,org:"MBZUAI",params:"7B",paradigm:"VLM instruct",modalities:["RGB","Text"],track:"vlm",idea:"First grounded RS VLM — region inputs + oriented-bbox visual grounding; LLaVA-1.5 recipe on RS instruction data.",status:"production",link:"https://arxiv.org/abs/2311.15826"},
  {name:"LHRS-Bot",year:2024,org:"Nanjing Univ",params:"7B",paradigm:"VLM instruct",modalities:["RGB","Text"],track:"vlm",idea:"VGI/OSM-enhanced alignment (LHRS-Align), multi-level vision-language bridging, curriculum learning; LHRS-Bench.",status:"production",link:"https://arxiv.org/abs/2402.02544"},
@@ -200,6 +281,8 @@ const FALLBACK_MODELS=[
  {name:"OmniGeo",year:2025,org:"Academic",params:"7B",paradigm:"VLM instruct",modalities:["RGB","Text","Vector"],track:"vlm",idea:"GeoAI generalist — fuses imagery, metadata, and spatial/vector data for zero-shot geospatial tasks.",status:"frontier",link:"https://arxiv.org/abs/2503.16326"},
  {name:"GeoViS",year:2025,org:"Academic",params:"7B",paradigm:"VLM agentic",modalities:["RGB","Text"],track:"vlm",idea:"Geospatially-rewarded visual search — iterative tree-structured grounding over large scenes.",status:"frontier",link:"https://arxiv.org/abs/2512.02715"},
  {name:"GeoEyes",year:2026,org:"Academic",params:"7B",paradigm:"VLM agentic",modalities:["RGB","Text"],track:"vlm",idea:"On-demand visual focusing for evidence-grounded understanding of ultra-high-res imagery.",status:"frontier",link:"https://arxiv.org/abs/2602.14201"},
+ {name:"TerraScope",year:2026,org:"Trento/TU Berlin/TUM/MBZUAI",params:"8B",paradigm:"VLM grounded reasoning",modalities:["RGB","SAR","Temporal","Text"],track:"vlm",idea:"Pixel-grounded reasoning — masks inside CoT; optical/SAR fusion + bi-temporal change; Terra-CoT 1M; TerraScope-Bench.",status:"frontier",link:"https://arxiv.org/abs/2603.19039"},
+ {name:"GeoSolver",year:2026,org:"Jilin Univ",params:"9B",paradigm:"VLM reasoning (process RL)",modalities:["RGB","Text"],track:"vlm",idea:"Token-level process reward model + Tree-GRPO for faithful step-by-step RS reasoning.",status:"frontier",link:"https://arxiv.org/abs/2603.09551"},
  {name:"RemoteShield",year:2026,org:"Academic",params:"7B",paradigm:"VLM robust",modalities:["RGB","Text"],track:"vlm",idea:"Robustness under realistic input perturbations via semantic-equivalence clusters + preference learning.",status:"frontier",link:"https://arxiv.org/abs/2604.17243"}
 ];
 const FALLBACK_BENCH=[
@@ -234,12 +317,14 @@ const PHASES=[
   "Dissect Galileo (flexible inputs, global+local objectives)",
   "Dissect AlphaEarth (embedding-field paradigm)",
   "Dissect OlmoEarth (latent MIM) + skim FLORO / GeoMeld / Copernicus-FM",
-  "Exercise: 1-pager — backbone vs embedding-field, when is each right?"]},
+  "Exercise: 1-pager — backbone vs embedding-field, when is each right?",
+  "Read (2025–26 additions): RAMEN + FlexiMo (resolution-flexible) · GeoLink (OSM pretraining) · MaRS (VHR SAR–optical) · AgriFM (domain FM)"]},
  {t:"Phase 5 — Evaluation & adaptation",w:"1–2 wks",items:[
   "Read GEO-Bench-2 + PANGAEA + 'No One Knows the SOTA in GeoFMs'",
   "Adaptation ladder: linear probe → LoRA r=8–16 → decoder-only → full FT",
   "Code: run GEO-Bench-2 harness on 2 models; reproduce one number",
-  "Exercise: design a fair GeoFM eval protocol (cross-region, few-shot curves)"]},
+  "Exercise: design a fair GeoFM eval protocol (cross-region, few-shot curves)",
+  "Read FairRSFM (biome worst-group) + VHR-Bench (GSD transfer) — add both axes to your protocol"]},
  {t:"Phase 5b — VLM foundations (Vision-Language track)",w:"1–2 wks",items:[
   "Read: LLaVA-1.5 recipe (projector + instruction tuning) · SigLIP · Flamingo/Qwen-VL attention variants",
   "Read: 'Vision-Language Modeling Meets Remote Sensing' survey (2025) for the full map",
@@ -254,7 +339,9 @@ const PHASES=[
   "Dissect EarthMind (spatial attention prompting, multi-granular fusion) + GeoViS/GeoEyes (agentic search)",
   "Read RSMMVP benchmark — why CLIP-blind pairs break RS MLLMs",
   "Code: run GeoChat or GeoPixel inference on your own imagery; inspect failure cases",
-  "Exercise: fill each model's row in the Comparison Matrix — predict slots from abstract, correct after reading"]},
+  "Exercise: fill each model's row in the Comparison Matrix — predict slots from abstract, correct after reading",
+  "Dissect TerraScope (masks inside CoT, optical+SAR, bi-temporal) — closest thing to the convergence model",
+  "Dissect the RL wave: GeoSolver (process RM) · MLRS (tool RL, no RS architecture) · FaithRS (faithfulness reward)"]},
  {t:"Phase 5d — Build your own RS-VLM",w:"2–4 wks",items:[
   "Swap experiment: replace CLIP encoder in LLaVA with a GeoFM encoder (DOFA/Prithvi features) + retrain projector",
   "Build small RS instruction set from OSM/VGI (RSTeller/SkyScript method) for your domain",
@@ -265,24 +352,25 @@ const PHASES=[
   "Weekly arXiv/HF scan (schedule with Claude)",
   "Draft first next-gen architecture spec (target 2–3 intersecting gaps)",
   "Design review with rs-dl-architect skill",
-  "Prototype smallest viable version + eval on GEO-Bench-2 subset"]}
+  "Prototype smallest viable version + eval on GEO-Bench-2 subset",
+  "VLM eval sweep: GEOBench-VLM + XLRS-Bench + TerraScope-Bench + AESP consistency"]}
 ];
 
 const GAPS=[
  {t:"G1 · No model dominates",d:"GEO-Bench-2: no single GFM wins across tasks; rankings flip with eval protocol ('No One Knows the SOTA', 2026).",o:"Robust-across-capabilities models, routing/composition systems, honest eval."},
  {t:"G2 · Sensor-agnosticism vs performance",d:"DOFA/Clay/FLORO take any sensor, but specialists still win per-sensor (SpectralEarth 93.5% vs DOFA 62.6% on hyperspectral crops).",o:"Wavelength-conditioned experts; dynamic capacity per sensor (spectral MoE)."},
- {t:"G3 · Temporal modeling is shallow",d:"Most GeoFMs stack a few frames. Real EO signal is irregular, long-horizon, per-pixel (phenology, change).",o:"Native irregular-time architectures; state-space over time × ViT over space."},
- {t:"G4 · Scale/GSD generalization",d:"Models pretrained at 10–30 m degrade at 0.3 m aerial and vice versa; Scale-MAE started, nobody finished.",o:"GSD-conditioned tokenization; multi-resolution pretraining pyramids."},
+ {t:"G3 · Temporal modeling is shallow",d:"Most GeoFMs stack a few frames. Real EO signal is irregular, long-horizon, per-pixel (phenology, change). AgriFM (multi-scale crop phenology) and T-JEPA (Δt-conditioned latent prediction, 2026) attack it; no dense long-sequence solution yet.",o:"Native irregular-time architectures; state-space over time × ViT over space."},
+ {t:"G4 · Scale/GSD generalization",d:"Models pretrained at 10–30 m degrade at 0.3 m aerial and vice versa; Scale-MAE started; FlexiMo (parameter-free GSD recalibration) and RAMEN (resolution as a controllable output) push it, and VHR-Bench (2026) shows 10 m-pretrained GeoFMs still transfer unevenly to VHR.",o:"GSD-conditioned tokenization; multi-resolution pretraining pyramids; VHR-in-the-loop pretraining."},
  {t:"G5 · Backbone vs embedding-field split",d:"AlphaEarth's global embedding field is analysis-ready but frozen and weakly transferable; backbones adapt but need pipelines.",o:"Hybrid: adaptable backbone that emits queryable global fields."},
- {t:"G6 · Multimodal fusion still early",d:"TerraMind's any-to-any is promising; joint SAR+optical+hyperspectral+weather+text+vector remains open; OSM barely used (GeoLink).",o:"Unified raster/vector/text tokenization; physics-consistent cross-sensor generation."},
- {t:"G7 · Geographic generalization & fairness",d:"Cross-region transfer is brutal and rarely a headline metric; training data skews to well-imaged regions.",o:"Region-held-out curricula; geographic domain adaptation as first-class objective."},
+ {t:"G6 · Multimodal fusion still early",d:"TerraMind's any-to-any is promising; joint SAR+optical+hyperspectral+weather+text+vector remains open; OSM now enters pretraining (GeoLink, NeurIPS 2025) but only with RGB; VHR SAR–optical fusion is just starting (MaRS, AAAI 2026).",o:"Unified raster/vector/text tokenization; physics-consistent cross-sensor generation."},
+ {t:"G7 · Geographic generalization & fairness",d:"Cross-region transfer is brutal and rarely a headline metric; training data skews to well-imaged regions. FairRSFM (2026): aggregate scores hide biome gaps (Prithvi-EO 2.0: 90.98% macro-F1 vs 83.72% mean worst-group on m-EuroSAT).",o:"Region-held-out curricula; geographic domain adaptation as first-class objective."},
  {t:"G8 · Beyond pixel reconstruction",d:"Pixel MAE wastes capacity on radiometric noise. JEPA/latent-MIM (GeoMeld, OlmoEarth) is displacing it.",o:"EO-physics-aware latent objectives (speckle-invariant, atmosphere-invariant)."},
  {t:"G9 · Compute & data efficiency",d:"600M+ params standard while users fine-tune on <10k labels. GFM/GeoSANE show cheaper paths exist.",o:"Continual-pretraining recipes; distillation from GeoFM ensembles; weight generation."},
- {t:"G10 · VLM convergence & agents",d:"GeoChat/EarthGPT line and pure-vision GeoFMs remain separate; grounded geo-referenced reasoning is emerging (Earth AI).",o:"GeoFM as vision encoder for an EO-native VLM with grounded outputs."},
+ {t:"G10 · VLM convergence & agents",d:"GeoChat/EarthGPT line and pure-vision GeoFMs remain separate; grounded geo-referenced reasoning is emerging (Earth AI). Agents now wrap GeoFM/EO tools (Earth-Agent: 104 MCP tools), and AlignJEPA gives frozen GeoFMs a cheap text alignment, but no end-to-end GeoFM-encoded VLM exists.",o:"GeoFM as vision encoder for an EO-native VLM with grounded outputs."},
  {t:"G11 · VLM — CLIP-blind vision encoding",d:"RSMMVP (2025): RS MLLMs inherit CLIP's blindness — poor spatial reasoning, counting, fine-grained grounding; vision encoder is the bottleneck, not the LLM.",o:"EO-native vision encoders (DOFA/Prithvi-class) inside VLMs; multi-encoder fusion."},
- {t:"G12 · VLM — RGB-only inputs",d:"Nearly all RS-VLMs consume RGB crops; multispectral/SAR/temporal dialogue barely exists (EarthDial/EarthGPT are early steps).",o:"Band-aware tokenization for LLM contexts; SAR+optical joint dialogue; time-series QA."},
- {t:"G13 · VLM — resolution vs context",d:"RS scenes are 10k×10k px; VLMs see ~1k. GeoPixel/GeoEyes/GeoViS patch it with tiling and agentic search, but no native solution.",o:"Hierarchical/foveated visual tokenization; zoomable evidence-grounded reasoning."},
- {t:"G14 · VLM — hallucination, robustness & eval",d:"RS MLLMs hallucinate objects and break under realistic perturbations (RemoteShield 2026); benchmarks are young and saturating fast.",o:"Geo-grounded factuality checks (against OSM/GIS layers); robustness training; contamination-free evals."}
+ {t:"G12 · VLM — RGB-only inputs",d:"Nearly all RS-VLMs consume RGB crops; SAR+optical+bi-temporal reasoning has arrived (TerraScope 2026, EarthMind), but multispectral bands still enter almost no VLM (EarthDial is the exception).",o:"Band-aware tokenization for LLM contexts; SAR+optical joint dialogue; time-series QA."},
+ {t:"G13 · VLM — resolution vs context",d:"RS scenes are 10k×10k px; VLMs see ~1k. GeoPixel/GeoEyes/GeoViS, ZoomSearch, LRS-VQA pruning and GeoScope patch it with tiling, pruning, zoom search and program execution. XLRS-Bench measures it, and GeoScope finds a ~5-object 'counting horizon' per view. Still no native solution.",o:"Hierarchical/foveated visual tokenization; zoomable evidence-grounded reasoning."},
+ {t:"G14 · VLM — hallucination, robustness & eval",d:"RS MLLMs hallucinate objects and break under realistic perturbations (RemoteShield 2026). RL reasoners add a new failure: chains that don't match the pixels. GeoSolver (process rewards), FaithRS and the AESP answer-grounding benchmark (2026) target it. Benchmarks are young and saturating fast.",o:"Geo-grounded factuality checks (against OSM/GIS layers); robustness training; contamination-free evals."}
 ];
 
 // ---------- data loading: single source of truth = 03-registry/*.json ----------
@@ -294,8 +382,7 @@ async function loadData(){
       MODELS=j.models.map(m=>({name:m.name,year:m.year,org:m.org,params:m.params,paradigm:m.paradigm,
         modalities:m.modalities,track:m.track,idea:m.idea||m.key_idea,status:m.status,link:m.link,
         tasks:m.tasks,datasets:m.datasets}));
-      const s=document.querySelector(".sub");
-      if(j.updated) s.textContent=s.textContent.split(" | ")[0]+" | registry updated "+j.updated;}
+      if(j.updated) document.getElementById("upd").textContent="Registry updated "+j.updated+" · "+j.models.length+" models";}
   }catch(e){/* file:// or offline — fallback stays */}
   try{
     const r=await fetch("03-registry/leaderboard.json");
@@ -332,10 +419,10 @@ function cards(){
   el.innerHTML=list.map(m=>`
    <div class="card">
     <div class="top"><h3><a href="${m.link}" target="_blank">${m.name}</a></h3><span class="yr">${m.year} · ${m.org}</span></div>
-    <div class="meta">${m.params} params · ${m.paradigm}</div>
+    <div class="meta">${m.params&&m.params!=="—"?m.params+" params · ":""}${m.paradigm}</div>
     <div class="idea">${m.idea}</div>
     ${m.datasets?`<div class="meta" style="margin-top:2px">📚 ${m.datasets}</div>`:''}
-    ${m.tasks?`<div class="tags" style="margin-top:2px">${m.tasks.map(t=>`<span class="tag" style="color:var(--amber);border-color:#4a3a1d">${t}</span>`).join("")}</div>`:''}
+    ${m.tasks?`<div class="tags" style="margin-top:2px">${m.tasks.map(t=>`<span class="tag task">${t}</span>`).join("")}</div>`:''}
     <div class="tags">
       <span class="badge ${m.status}">${m.status}</span>
       ${m.track==="vlm"?'<span class="badge vlmb">VLM</span>':''}
@@ -348,7 +435,7 @@ function timeline(){
   const el=document.getElementById("timeline");
   const byYear={};
   MODELS.forEach(m=>{(byYear[m.year]=byYear[m.year]||[]).push(m.name)});
-  el.innerHTML="<div class='sub' style='margin-bottom:12px;font-weight:600;color:var(--text)'>Evolution timeline</div>"+
+  el.innerHTML="<h2 class='display'>Evolution timeline</h2>"+
    Object.keys(byYear).sort((a,b)=>b-a).map(y=>`
     <div class="tl-row"><div class="tl-year">${y}</div>
     <div class="tl-items">${byYear[y].map(n=>`<span class="tl-item">${n}</span>`).join("")}</div></div>`).join("");
@@ -368,52 +455,119 @@ document.querySelectorAll(".chip[data-m]").forEach(c=>c.onclick=()=>{
 document.getElementById("q").oninput=e=>{q=e.target.value.toLowerCase();cards();};
 
 // ---------- benchmarks ----------
+let bTrack="all";
+const TRACK_LBL={vision:"Vision track",vlm:"VLM track",agent:"Agents"}, TRACK_CLS={vision:"production",vlm:"vlmb",agent:"agentb"};
 function bench(){
-  document.getElementById("benchlist").innerHTML=BENCH.map(b=>`
-   <div class="bench">
-     <div class="bh"><h3><a href="${b.link}" target="_blank">${b.name}</a> <span class="yr">${b.year}</span></h3>
-     <span class="badge ${b.track==="vlm"?"vlmb":"production"}">${b.track==="vlm"?"VLM track":"Vision track"}</span></div>
+  const list=BENCH.filter(b=>bTrack==="all"||(b.track||"vision")===bTrack);
+  document.getElementById("benchlist").innerHTML=list.map(b=>{
+    const t=b.track||"vision";
+    const unknown=b.leaders.every(l=>/^(not yet tracked|none)/i.test(l));
+    return `<article class="bench">
+     <div class="bh"><h3><a href="${b.link}" target="_blank">${b.name}</a><span class="yr">${b.year}</span></h3>
+     <span class="badge ${TRACK_CLS[t]||"production"}">${TRACK_LBL[t]||t}</span></div>
      <div class="measures">${b.measures}</div>
-     <div class="lead">Reported leaders: <b>${b.leaders.join(" · ")}</b></div>
+     <div class="lead">Reported leaders: <b class="${unknown?"none":""}">${b.leaders.join(" · ")}</b></div>
      <div class="find">${b.finding}</div>
-   </div>`).join("");
+   </article>`}).join("")||"<p style='color:var(--muted)'>No benchmarks in this track yet.</p>";
 }
+document.querySelectorAll(".chip[data-b]").forEach(c=>c.onclick=()=>{
+  document.querySelectorAll(".chip[data-b]").forEach(x=>x.classList.remove("on"));
+  c.classList.add("on");bTrack=c.dataset.b;bench();
+});
 
 // ---------- roadmap ----------
 const KEY="geofm-roadmap-v1";
 let done={};try{done=JSON.parse(localStorage.getItem(KEY))||{}}catch(e){}
+const TRACK_OF=pi=>pi<=4?"Vision track":pi<=7?"Vision-language track":"Convergence";
+let openSet=null;
+function nextUp(){
+  for(let pi=0;pi<PHASES.length;pi++)for(let i=0;i<PHASES[pi].items.length;i++)if(!done[pi+"-"+i])return {pi,i};
+  return null;
+}
 function phases(){
-  const el=document.getElementById("phases");
-  el.innerHTML=PHASES.map((p,pi)=>{
-    const total=p.items.length, d=p.items.filter((_,i)=>done[pi+"-"+i]).length;
-    return `<div class="phase">
-      <div class="phase-head"><h3>${p.t} <span class="pct" style="font-weight:400">(${p.w})</span></h3><span class="pct">${d}/${total}</span></div>
-      <div class="bar"><i style="width:${total?100*d/total:0}%"></i></div>
+  const all=PHASES.reduce((n,p)=>n+p.items.length,0);
+  const dn=PHASES.reduce((n,p,pi)=>n+p.items.filter((_,i)=>done[pi+"-"+i]).length,0);
+  const nx=nextUp();
+  if(openSet===null)openSet=new Set(nx?[nx.pi]:[]);
+  const pctAll=all?Math.round(100*dn/all):0;
+  document.getElementById("rmcnt").textContent=pctAll+"%";
+  const trackStats=["Vision track","Vision-language track","Convergence"].map(t=>{
+    let a=0,d=0;PHASES.forEach((p,pi)=>{if(TRACK_OF(pi)===t){a+=p.items.length;d+=p.items.filter((_,i)=>done[pi+"-"+i]).length}});
+    return `<span>${t}: <b>${d}/${a}</b></span>`;}).join("");
+  document.getElementById("rmtop").innerHTML=`
+    <div class="rm-card"><div class="lbl">Overall progress</div>
+      <div class="big">${pctAll}%<small>${dn} of ${all} items</small></div>
+      <div class="bar"><i style="width:${pctAll}%"></i></div>
+      <div class="tracks">${trackStats}</div></div>
+    <div class="rm-card"><div class="lbl">Next up</div>
+      ${nx?`<button class="next-btn" id="gonext"><span class="ph">${PHASES[nx.pi].t}</span>${PHASES[nx.pi].items[nx.i]}</button>`
+          :`<div style="font-size:15px;color:var(--i2)">Every item is ticked. Time to design something.</div>`}</div>`;
+  let lastTrack="";
+  document.getElementById("phases").innerHTML=PHASES.map((p,pi)=>{
+    const total=p.items.length, d=p.items.filter((_,i)=>done[pi+"-"+i]).length, pct=total?Math.round(100*d/total):0;
+    const tr=TRACK_OF(pi), lbl=tr!==lastTrack?`<div class="track-lbl${lastTrack?"":" first"}">${tr}</div>`:"";
+    lastTrack=tr;
+    const open=openSet.has(pi);
+    return lbl+`<div class="phase ${open?"open":""} ${d===total?"complete":""}" data-pi="${pi}">
+      <button class="phase-head" aria-expanded="${open}"><span class="ring" style="--p:${pct}">${d===total?"✓":pct+"%"}</span>
+        <h3>${p.t}<span class="w">${p.w}</span></h3><span class="pct">${d}/${total}</span><span class="chev"></span></button>
       <div class="items">${p.items.map((it,i)=>{
-        const id=pi+"-"+i, ck=done[id]?"checked":"";
-        return `<div class="item ${done[id]?'done':''}" data-id="${id}">
-          <input type="checkbox" ${ck}><label>${it.replace(/^(Read|Code|Exercise|Dissect|Work|Datasets)(:|\s)/,'<span class="k">$1</span>$2')}</label></div>`;
+        const id=pi+"-"+i, isNext=nx&&nx.pi===pi&&nx.i===i;
+        return `<div class="item ${done[id]?"done":""} ${isNext?"next":""}" data-id="${id}">
+          <input type="checkbox" ${done[id]?"checked":""} aria-label="Mark done"><label>${isNext?'<span class="nx">Next</span>':""}${it.replace(/^(Read|Code|Exercise|Dissect|Work|Datasets)(:|\s)/,'<span class="k">$1</span>$2')}</label></div>`;
       }).join("")}</div></div>`;
   }).join("");
-  el.querySelectorAll(".item").forEach(it=>it.onclick=e=>{
-    const id=it.dataset.id;done[id]=!done[id];
-    localStorage.setItem(KEY,JSON.stringify(done));phases();
+  document.querySelectorAll(".phase-head").forEach(h=>h.onclick=()=>{
+    const pi=+h.parentElement.dataset.pi;openSet.has(pi)?openSet.delete(pi):openSet.add(pi);phases();
   });
+  document.querySelectorAll(".item").forEach(it=>it.onclick=()=>{
+    const id=it.dataset.id;done[id]=!done[id];
+    try{localStorage.setItem(KEY,JSON.stringify(done))}catch(e){}
+    phases();
+  });
+  const g=document.getElementById("gonext");
+  if(g)g.onclick=()=>{openSet.add(nx.pi);phases();
+    const el=document.querySelector(".item.next");if(el)el.scrollIntoView({behavior:"smooth",block:"center"});};
 }
 
 // ---------- gaps ----------
+const CONV=["G10","G11","G12"];
 function gaps(){
-  document.getElementById("gaplist").innerHTML=GAPS.map(g=>`
-   <div class="gap"><h3>${g.t}</h3><p>${g.d}</p><span class="opp">→ Opportunity: ${g.o}</span></div>`).join("");
+  const parse=g=>{const [id,...rest]=g.t.split(" · ");const title=rest.join(" · ").replace(/^VLM — /,"");return {id,title,n:+id.slice(1),...g}};
+  const all=GAPS.map(parse);
+  const card=g=>`<article class="gap ${g.n>=10?"vlm":""} ${CONV.includes(g.id)?"conv":""}" id="${g.id.toLowerCase()}">
+     <div class="gh"><span class="gid">${g.id}</span><h4>${g.title}</h4>${CONV.includes(g.id)?'<span class="badge conv">Convergence</span>':""}</div>
+     <div class="lbl">Evidence</div><p>${g.d}</p>
+     <div class="lbl">Opportunity</div><div class="opp">${g.o}</div></article>`;
+  document.getElementById("gaplist").innerHTML=`
+   <section class="thesis">
+     <span class="badge conv">The convergence thesis · G10 + G11 + G12</span>
+     <h3>A GeoFM-encoded, multi-sensor, <em>pixel-grounded</em> EO-native VLM doesn't exist yet.</h3>
+     <p>TerraScope (2026) now combines pixel grounding, optical+SAR fusion and bi-temporal reasoning, but it still sees through a CLIP-class InternVL3 encoder and takes no multispectral bands. The open piece is narrower: put a band-aware GeoFM encoder (DOFA, RAMEN or TerraMind-class) into that recipe.</p>
+     <p>The counter-hypothesis to test: MLRS (2026) gets competitive results from a generalist VLM plus tool RL, with no remote-sensing-specific architecture.</p>
+     <div class="links">${CONV.map(id=>{const g=all.find(x=>x.id===id);return `<a href="#${id.toLowerCase()}" data-gap>${id} · ${g.title}</a>`}).join("")}</div>
+   </section>
+   <div class="gap-group"><h3>Vision foundation models · G1–G9</h3><div class="gap-grid">${all.filter(g=>g.n<10).map(card).join("")}</div></div>
+   <div class="gap-group"><h3>Vision-language models · G10–G14</h3><div class="gap-grid">${all.filter(g=>g.n>=10).map(card).join("")}</div></div>`;
+  document.querySelectorAll("a[data-gap]").forEach(a=>a.onclick=e=>{
+    e.preventDefault();const el=document.querySelector(a.getAttribute("href"));
+    document.querySelectorAll(".gap").forEach(x=>x.style.borderColor="");
+    el.style.borderColor="var(--accent)";el.scrollIntoView({behavior:"smooth",block:"center"});
+  });
 }
 
-// ---------- tabs ----------
-document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
-  document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));
-  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
-  b.classList.add("active");
-  document.getElementById(b.dataset.tab).classList.add("active");
-});
+// ---------- tabs (deep-linkable: #landscape #roadmap #gaps #bench #workflow) ----------
+const TABS=[...document.querySelectorAll(".tabs a[data-tab]")];
+function showTab(id,push){
+  if(!TABS.some(t=>t.dataset.tab===id))id="landscape";
+  TABS.forEach(t=>t.setAttribute("aria-selected",t.dataset.tab===id?"true":"false"));
+  document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x.id===id));
+  if(push)history.replaceState(null,"","#"+id);
+}
+TABS.forEach(t=>t.onclick=e=>{e.preventDefault();showTab(t.dataset.tab,true);
+  const top=document.querySelector(".tabs").getBoundingClientRect().top+scrollY-60;if(scrollY>top)scrollTo({top});});
+addEventListener("hashchange",()=>showTab(location.hash.slice(1)));
+showTab(location.hash.slice(1));
 
 stats();cards();timeline();phases();gaps();bench();loadData();
 </script>

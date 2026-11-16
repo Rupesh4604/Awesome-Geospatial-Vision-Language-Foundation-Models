@@ -4,6 +4,8 @@
 [![Site](https://img.shields.io/badge/Live-Dashboard-38bdf8)](https://rupesh4604.github.io/Awesome-Geospatial-Vision-Language-Foundation-Models/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-34d399.svg)](#contributing)
 
+> **Nov 2026 update:** +12 vision GeoFMs (GeoLink, MaRS, FlexiMo, AgriFM, RAMEN, SkySense V2, T-JEPA…), +19 RS-VLMs (TerraScope, GeoSolver, MLRS, FaithRS, Earth-Agent…), +14 benchmarks and datasets, and a new section of surveys, companion collections and eval tooling.
+
 A curated, opinionated map of geospatial foundation models — both **pure-vision GeoFMs** and **vision-language models (RS-VLMs)** — plus a learning roadmap, open-problem gap map, and benchmark tracker.
 
 **Live site:** [Dashboard](https://rupesh4604.github.io/Awesome-Geospatial-Vision-Language-Foundation-Models/) · [RS-VLM Anatomy explainer](https://rupesh4604.github.io/Awesome-Geospatial-Vision-Language-Foundation-Models/anatomy.html) · [Comparison Matrix](https://rupesh4604.github.io/Awesome-Geospatial-Vision-Language-Foundation-Models/matrix.html)
@@ -14,6 +16,8 @@ A curated, opinionated map of geospatial foundation models — both **pure-visio
 - [Vision-Language Models (RS-VLMs)](#vision-language-models-rs-vlms)
 - [Benchmarks](#benchmarks)
 - [Datasets for VLM training](#datasets-for-vlm-training)
+- [Surveys & companion collections](#surveys--companion-collections)
+- [Code, toolkits & evaluation](#code-toolkits--evaluation)
 - [The three-slot mental model](#the-three-slot-mental-model)
 - [Open problems](#open-problems)
 - [Learning roadmap](#learning-roadmap)
@@ -44,10 +48,22 @@ A curated, opinionated map of geospatial foundation models — both **pure-visio
 | GeoSANE | 2026 | HSG/Michigan | — | Weight generation from FMs | meta | [arXiv](https://arxiv.org/abs/2603.23408) |
 | GeoMeld-FM | 2026 | IITB/MBZUAI | 300M | MAE+JEPA+CLIP hybrid | MSI, SAR, text | [arXiv](https://arxiv.org/abs/2604.10591) |
 | FLORO | 2026 | KAUST | 300M | MAE, availability-aware inputs | MSI, SAR, RGB | [arXiv](https://arxiv.org/abs/2605.28174) |
+| FlexiMo | 2025 | AIR-CAS/Southeast/HZDR | 86M (ViT-B) | Parameter-free resolution-aware patch-embed on DOFA | MSI, RGB, any GSD | [arXiv](https://arxiv.org/abs/2503.23844) · [code](https://github.com/danfenghong/IEEE_TGRS_Fleximo) |
+| AgriFM | 2025 | HKU/Beihang/Wuhan | — | Video-Swin, land-cover-fraction supervised, 25M images | MSI, temporal (MODIS/Landsat/S2) | [arXiv](https://arxiv.org/abs/2505.21357) · [code](https://github.com/flyakon/AgriFM) |
+| RemoteSAM | 2025 | — | — | Referring-seg foundation model, multi-interface | RGB, text | [arXiv](https://arxiv.org/abs/2505.18022) |
+| MAPEX | 2025 | — | — | Mixture of modality experts + task pruning | MSI, SAR, RGB | [arXiv](https://arxiv.org/abs/2507.07527) |
+| SkySense V2 | 2025 | Ant/Wuhan | — | Single unified backbone, RS-tailored SSL | RGB, MSI, SAR, temporal | [arXiv](https://arxiv.org/abs/2507.13812) |
+| GeoLink | 2025 | PKU/CASIA/EPFL | 300M | Image ↔ OSM-graph contrastive (NeurIPS'25) | RGB, OSM vector | [arXiv](https://arxiv.org/abs/2509.26016) · [code](https://github.com/bailubin/GeoLink_NeurIPS2025) |
+| RAMEN | 2025 | Paris Cité/Inria/INRAE | 98.5M | MAE, resolution as controllable output | MSI, SAR, RGB, DEM | [arXiv](https://arxiv.org/abs/2512.05025) · [code](https://github.com/nicolashoudre/RAMEN) |
+| MaRS | 2026 | Wuhan | — | Dual SwinV2, cross-granularity contrastive + meta-modality attn (AAAI'26) | VHR SAR + optical (0.35 m) | [AAAI](https://ojs.aaai.org/index.php/AAAI/article/view/38153) · [code](https://github.com/WanderRainy/MaRS) |
+| AlignJEPA | 2026 | — | light aligner | Predictive VL alignment for frozen GeoFMs (AnySat + RemoteCLIP) | MSI, text | [arXiv](https://arxiv.org/abs/2608.15456) |
+| HyperSAM | 2026 | — | — | Promptable SAM-initialized hyperspectral FM | HSI | [arXiv](https://arxiv.org/abs/2609.37340) |
+| T-JEPA | 2026 | — | — | Temporal JEPA, Δt-conditioned latent transitions | MSI, temporal | [arXiv](https://arxiv.org/abs/2610.05731) |
+| UniFlow-RS | 2026 | — | — | Shared latent flow-matching predictor across tasks | MSI, SAR, RGB | [arXiv](https://arxiv.org/abs/2611.14281) |
 
 ## Vision-Language Models (RS-VLMs)
 
-41 models tracked, grouped by capability generation. Full per-model breakdown (encoder × bridge × grounding × training data × tasks): **[Comparison Matrix](https://rupesh4604.github.io/Awesome-Geospatial-Vision-Language-Foundation-Models/matrix.html)**
+63 models tracked, grouped by capability generation. Full per-model breakdown (encoder × bridge × grounding × training data × tasks): **[Comparison Matrix](https://rupesh4604.github.io/Awesome-Geospatial-Vision-Language-Foundation-Models/matrix.html)**
 
 ### Contrastive (retrieval / zero-shot)
 
@@ -76,6 +92,7 @@ A curated, opinionated map of geospatial foundation models — both **pure-visio
 | OmniGeo | 2025 | GeoAI corpora + vector | cls, VQA, geo-reasoning | [arXiv](https://arxiv.org/abs/2503.16326) |
 | SkyMoE | 2025 | multi-task corpora | cls, caption, VQA, grounding (MoE) | [arXiv](https://arxiv.org/abs/2512.02517) |
 | EarthVL | 2026 | understanding+generation corpus | caption, VQA, **text→image generation** | [arXiv](https://arxiv.org/abs/2601.02783) |
+| FUSE-RSVLM | 2025 | — | caption, VQA (multi-feature fusion vs visual forgetting) | [arXiv](https://arxiv.org/abs/2512.24022) |
 
 ### Region / visual-prompting
 
@@ -84,6 +101,7 @@ A curated, opinionated map of geospatial foundation models — both **pure-visio
 | EarthMarker | 2024 | RSVP-3M | region/point caption & cls | [arXiv](https://arxiv.org/abs/2407.13596) |
 | EagleVision | 2025 | EVAttrs-95k | detection + object-attribute dialogue | [arXiv](https://arxiv.org/abs/2503.23330) |
 | EarthGPT-X | 2025 | multi-source prompt data | point/box prompting, region tasks (optical/SAR/IR) | [arXiv](https://arxiv.org/abs/2504.12795) |
+| DescribeEarth | 2025 | Geo-DLC | object-level detailed localized captions | [arXiv](https://arxiv.org/abs/2509.25654) |
 
 ### Pixel-grounded / segmentation
 
@@ -97,6 +115,9 @@ A curated, opinionated map of geospatial foundation models — both **pure-visio
 | SegEarth-R1 | 2025 | EarthReason | reasoning segmentation | [arXiv](https://arxiv.org/abs/2504.09644) |
 | EarthMind | 2025 | EarthMind corpus | multi-granular + optical-SAR fusion | [arXiv](https://arxiv.org/abs/2506.01667) |
 | SegEarth-R2 | 2025 | LaSeRS | ref/reasoning/multi-target seg | [arXiv](https://arxiv.org/abs/2512.20013) |
+| **TerraScope** | 2026 | Terra-CoT 1M (masks inside CoT) | pixel-grounded reasoning, optical+SAR, bi-temporal | [arXiv](https://arxiv.org/abs/2603.19039) · [project](https://shuyansy.github.io/terrascope/) |
+| GeoReason-Seg | 2026 | EarthReason, RRSIS-D | reasoning seg (keeps [SEG] tied to grounding) | [arXiv](https://arxiv.org/abs/2610.23416) · [code](https://github.com/Fanc0126/GeoReason) |
+| FloodVLM-Pix | 2026 | 131.2k flood patches | flood VQA + pixel flood seg | [arXiv](https://arxiv.org/abs/2610.23377) |
 
 ### Temporal / change
 
@@ -105,6 +126,7 @@ A curated, opinionated map of geospatial foundation models — both **pure-visio
 | CDChat | 2024 | LEVIR-CD + SYSU-CD | bi-temporal change description | [arXiv](https://arxiv.org/abs/2409.16261) |
 | TEOChat | 2024 | TEOChatlas 554k | temporal QA, change, damage assessment | [arXiv](https://arxiv.org/abs/2410.06234) |
 | GeoLLaVA | 2024 | fMoW temporal pairs | temporal change QA (PEFT) | [arXiv](https://arxiv.org/abs/2410.19552) |
+| ViLaCD-R1 | 2025 | bi-temporal block tasks | SFT+RL semantic change detection + mask decoder | [arXiv](https://arxiv.org/abs/2512.23244) |
 
 ### Reasoning / RL (the 2025–26 wave)
 
@@ -116,6 +138,13 @@ A curated, opinionated map of geospatial foundation models — both **pure-visio
 | RSThinker | 2025 | grounded CoT | evidence-tied reasoning | [arXiv](https://arxiv.org/abs/2509.22221) |
 | GeoZero | 2025 | RL-zero (no SFT CoT) | reasoning from rewards alone | [arXiv](https://arxiv.org/abs/2511.22645) |
 | GeoReason | 2026 | logical-consistency RL | contradiction-free reasoning | [arXiv](https://arxiv.org/abs/2601.04118) |
+| Few-shot RLVR | 2025 | 1-shot RLVR, rule rewards only | cls, VQA, grounding w/o captions | [arXiv](https://arxiv.org/abs/2507.21745) |
+| Geo-R1 | 2025 | reason-then-act RFT @ 3B | few-shot REC / OVD / RES | [arXiv](https://arxiv.org/abs/2509.21976) · [code](https://github.com/Geo-R1/geo-r1) |
+| **GeoSolver** | 2026 | process reward model + Tree-GRPO @ 9B | faithful step-by-step reasoning, 17 datasets | [arXiv](https://arxiv.org/abs/2603.09551) |
+| RS-HyRe-R1 | 2026 | hybrid rewards vs 'perceptual inertia' @ 3B | grounding, detection, VQA | [arXiv](https://arxiv.org/abs/2604.17504) |
+| **MLRS (More with Less)** | 2026 | multi-task tool RL (GRTO), InternVL3.5 + SAM3 | generalist recipe, no RS-specific architecture | [arXiv](https://arxiv.org/abs/2607.15942) |
+| ReDiS | 2026 | reasoning–diagnosis self-evolution | grounded multi-step reasoning | [arXiv](https://arxiv.org/abs/2610.18388) |
+| FaithRS | 2026 | hallucination-aware self-reflection, GSPO | faithful reasoning, 0.8–9B | [arXiv](https://arxiv.org/abs/2610.18369) |
 
 ### Agentic / ultra-high-resolution
 
@@ -126,6 +155,12 @@ A curated, opinionated map of geospatial foundation models — both **pure-visio
 | GeoViS | 2025 | reward-guided search tree | [arXiv](https://arxiv.org/abs/2512.02715) |
 | GeoEyes | 2026 | on-demand focusing + evidence chains | [arXiv](https://arxiv.org/abs/2602.14201) |
 | RemoteShield | 2026 | robustness (DPO on perturbations) | [arXiv](https://arxiv.org/abs/2604.17243) |
+| LRS-VQA pruning | 2025 | text-guided coarse-to-fine token pruning | [arXiv](https://arxiv.org/abs/2503.07588) |
+| Earth-Agent | 2025 | MCP agent, 104 EO tools (RGB/spectral/products), ICLR'26 | [arXiv](https://arxiv.org/abs/2509.23141) · [code](https://github.com/opendatalab/Earth-Agent) |
+| ZoomSearch | 2025 | training-free adaptive zoom search | [arXiv](https://arxiv.org/abs/2511.20460) |
+| TerraAgent | 2026 | demonstration-grounded multi-agent, long-context VQA | [arXiv](https://arxiv.org/abs/2610.12517) |
+| GeoScope | 2026 | program execution past the 'counting horizon' | [arXiv](https://arxiv.org/abs/2611.12699) |
+| DisasterAgent | 2026 | evidence-driven verifiable disaster reports | [arXiv](https://arxiv.org/abs/2611.13776) |
 
 ## Benchmarks
 
@@ -139,6 +174,21 @@ A curated, opinionated map of geospatial foundation models — both **pure-visio
 | EarthMind-Bench | 2025 | VLM | multi-granular + multi-sensor | [arXiv](https://arxiv.org/abs/2506.01667) |
 | RSMMVP | 2025 | VLM | vision-centric probes (CLIP-blindness) | [arXiv](https://arxiv.org/abs/2503.15816) |
 | EarthSpatialBench | 2026 | VLM | quantitative spatial reasoning (distance/direction/topology) | [HF](https://hf.co/papers/2602.15918) |
+| GEOBench-VLM | 2024 | VLM | 31 geospatial sub-tasks (counting, det, seg, temporal) | [arXiv](https://arxiv.org/abs/2411.19325) · [code](https://github.com/The-AI-Alliance/GEO-Bench-VLM) |
+| XLRS-Bench | 2025 | VLM | ultra-high-res perception + reasoning (CVPR'25) | [arXiv](https://arxiv.org/abs/2503.23771) · [code](https://github.com/AI9Stars/XLRS-Bench) |
+| ThinkGeo | 2025 | Agent | tool-augmented RS agent tasks | [arXiv](https://arxiv.org/abs/2505.23752) |
+| Earth-Bench | 2025 | Agent | 248 tasks, 13.7k images, 104 tools | [arXiv](https://arxiv.org/abs/2509.23141) |
+| TerraScope-Bench | 2026 | VLM | pixel-grounded reasoning: area, coverage, distance, change | [arXiv](https://arxiv.org/abs/2603.19039) |
+| NeSy-Route | 2026 | VLM | constrained route planning (neuro-symbolic) | [arXiv](https://arxiv.org/abs/2603.16307) |
+| GeoDisaster | 2026 | Agent | 2,921 operational disaster-reasoning instances | [arXiv](https://arxiv.org/abs/2606.17246) |
+| RRS-10K | 2026 | VLM | rare-scene interpretation, multitask | [arXiv](https://arxiv.org/abs/2607.24810) |
+| RSVideo | 2026 | VLM | remote-sensing video understanding | [arXiv](https://arxiv.org/abs/2608.02039) |
+| AESP | 2026 | VLM | answer–grounding consistency in grounded VQA | [arXiv](https://arxiv.org/abs/2610.13636) |
+| UMBench | 2026 | VLM | fine-grained UAV urban-management reasoning | [arXiv](https://arxiv.org/abs/2611.06770) |
+| RICapBench | 2026 | VLM | fine-grained instance/attribute/relation captioning | [arXiv](https://arxiv.org/abs/2611.16413) |
+| FairRSFM | 2026 | Vision | biome-group robustness (worst-group) | [arXiv](https://arxiv.org/abs/2610.05790) |
+| VHR-Bench | 2026 | Vision | GeoFM transfer to very-high-resolution imagery | [arXiv](https://arxiv.org/abs/2611.08003) |
+| RS-MLLM: domain-specific or general? | 2026 | VLM | capability boundaries of RS-MLLMs vs generalists | [arXiv](https://arxiv.org/abs/2607.20284) |
 
 ## Datasets for VLM training
 
@@ -158,6 +208,45 @@ A curated, opinionated map of geospatial foundation models — both **pure-visio
 | Falcon_SFT | 2025 | 78M samples | 14-task mega-SFT over 5.6M images |
 | EarthReason / LaSeRS | 2025 | reasoning-seg | implicit-query and hierarchical language-guided seg |
 | ChatEarthNet | 2024 | global S2 captions | Sentinel-2 + LLM-generated captions |
+| DisasterM3 | 2025 | 26,988 bi-temporal image sets | multi-sensor disaster damage instructions ([arXiv](https://arxiv.org/abs/2505.21089)) |
+| RSCC | 2025 | 62,351 pre/post pairs | disaster change captions ([arXiv](https://arxiv.org/abs/2509.01907)) |
+| MaRS-16M | 2026 | 16.8M VHR SAR–optical pairs | Umbra/Capella X-band SAR + optical @0.35 m (pretraining) |
+| Terra-CoT | 2026 | 1M samples | pixel masks embedded inside reasoning chains ([arXiv](https://arxiv.org/abs/2603.19039)) |
+| Geo-PRM-2M | 2026 | ~2M process labels | entropy-guided MCTS + injected hallucinations ([arXiv](https://arxiv.org/abs/2603.09551)) |
+| MajorTOM:Elliot Pretrain | 2026 | 279,166 10 km tiles | multi-sensor, multi-temporal, picked by clustering AlphaEarth embeddings ([arXiv](https://arxiv.org/abs/2610.18624)) |
+| FloodVLM-Pix data | 2026 | 131.2k flood patches | language + pixel flood labels ([arXiv](https://arxiv.org/abs/2610.23377)) |
+
+## Surveys & companion collections
+
+Other lists worth following. This repo focuses on the GeoFM ↔ RS-VLM convergence; these go deeper on their own slices.
+
+| Resource | Type | Focus |
+|---|---|---|
+| [A Survey on Remote Sensing Foundation Models: From Vision to Multimodality](https://github.com/IRIP-BUAA/A-Survey-on-Remote-Sensing-Foundation-Models-From-Vision-to-Multimodality) ([arXiv](https://arxiv.org/abs/2503.22081)) | survey + list | vision → multimodal RSFMs (IRIP-BUAA) |
+| [Awesome-Remote-Sensing-Foundation-Models](https://github.com/Jack-bo1220/Awesome-Remote-Sensing-Foundation-Models) | list | the largest RSFM paper list: vision, VL, generative, agents |
+| [Awesome-Remote-Sensing-Multimodal-Large-Language-Model](https://github.com/ZhanYang-nwpu/Awesome-Remote-Sensing-Multimodal-Large-Language-Model) | survey + list | RS-MLLMs: models, datasets, benchmarks |
+| [Awesome-RS-SpatioTemporal-VLMs](https://github.com/Chen-Yang-Liu/Awesome-RS-SpatioTemporal-VLMs) | survey + list | change captioning, temporal VQA, spatio-temporal VLMs (IEEE GRSM'25) |
+| [Awesome-RS-VL-Data](https://github.com/VisionXLab/Awesome-RS-VL-Data) | list | remote-sensing vision-language datasets |
+| [awesome-remote-sensing-vision-language-models](https://github.com/lzw-lzw/awesome-remote-sensing-vision-language-models) | list | early RS-VLM papers (≤2024) |
+| [awesome-RSVLM](https://github.com/om-ai-lab/awesome-RSVLM) | list | RS VLMs, datasets, benchmarks (≤2024) |
+| [awesome-RSFMs](https://github.com/xiaoaoran/awesome-RSFMs) | survey + list | "Foundation Models for RS and EO: A Survey" |
+| [satellite-image-deep-learning/techniques](https://github.com/satellite-image-deep-learning/techniques) | list | broad DL-for-satellite techniques, beyond FMs |
+| Vision-Language Modeling Meets Remote Sensing ([arXiv](https://arxiv.org/abs/2505.14361)) | survey | models, datasets, perspectives (2025) |
+| A Genealogy of Multi-Sensor Foundation Models in RS ([arXiv](https://arxiv.org/abs/2504.17177)) | survey | multi-sensor FM lineage |
+| Data-Driven Vision-Language Models for Remote Sensing ([arXiv](https://arxiv.org/abs/2610.31304)) | survey | data-centric view of RS-VLM adaptation (Oct 2026) |
+
+## Code, toolkits & evaluation
+
+| Tool | What it does |
+|---|---|
+| [TorchGeo](https://github.com/torchgeo/torchgeo) | geospatial datasets, samplers, transforms, pretrained weights |
+| [TerraTorch](https://github.com/torchgeo/terratorch) | fine-tuning toolkit for GeoFMs (Prithvi, TerraMind, Clay, DOFA…) |
+| [GEO-Bench](https://github.com/ServiceNow/geo-bench) | standard GeoFM classification/segmentation benchmark harness |
+| [PANGAEA](https://github.com/VMarsocci/pangaea-bench) | frozen-encoder dense-task benchmark for GeoFMs |
+| [GEOBench-VLM](https://github.com/The-AI-Alliance/GEO-Bench-VLM) | geospatial VLM benchmark + eval code |
+| [XLRS-Bench](https://github.com/AI9Stars/XLRS-Bench) | ultra-high-res RS MLLM benchmark |
+| [VLMEvalKit](https://github.com/open-compass/VLMEvalKit) · [lmms-eval](https://github.com/EvolvingLMMs-Lab/lmms-eval) | general VLM eval harnesses (for the generalist baselines) |
+| Model code: [TerraMind](https://github.com/IBM/terramind) · [Prithvi-EO-2.0](https://github.com/NASA-IMPACT/Prithvi-EO-2.0) · [Clay](https://github.com/Clay-foundation/model) · [DOFA](https://github.com/zhu-xlab/DOFA) · [OlmoEarth](https://github.com/allenai/olmoearth_pretrain) · [GeoChat](https://github.com/mbzuai-oryx/GeoChat) · [GeoPixel](https://github.com/mbzuai-oryx/GeoPixel) · [Earth-Agent](https://github.com/opendatalab/Earth-Agent) | reference implementations |
 
 ## The three-slot mental model
 
@@ -171,7 +260,7 @@ Interactive walkthrough: **[Anatomy of an RS-VLM](https://rupesh4604.github.io/A
 
 ## Open problems
 
-14 gaps tracked in [`04-next-gen/gap-map.md`](04-next-gen/gap-map.md) — headline items: no model dominates (G1), sensor-agnosticism vs performance (G2), CLIP-blind encoders in VLMs (G11), RGB-only VLM inputs (G12), resolution vs context window (G13). The convergence thesis: **a GeoFM-encoded, multi-sensor, pixel-grounded EO-native VLM does not exist yet** — TerraMind, GeoPixel, and EarthDial each hold one piece.
+14 gaps tracked in [`04-next-gen/gap-map.md`](04-next-gen/gap-map.md) — headline items: no model dominates (G1), sensor-agnosticism vs performance (G2), CLIP-blind encoders in VLMs (G11), RGB-only VLM inputs (G12), resolution vs context window (G13). The convergence thesis: **a GeoFM-encoded, multi-sensor, pixel-grounded EO-native VLM does not exist yet.** TerraScope (2026) now combines pixel grounding, optical+SAR and bi-temporal reasoning, but it still uses a CLIP-class InternVL3 encoder and has no multispectral input. The open piece is narrower: **put a GeoFM encoder with band-aware input into that recipe** (G11+G12). Meanwhile MLRS (2026) argues the opposite: scale plus tool RL on a generalist VLM may be enough.
 
 ## Learning roadmap
 
@@ -187,7 +276,7 @@ Interactive walkthrough: **[Anatomy of an RS-VLM](https://rupesh4604.github.io/A
 ├── 02-papers/            # Paper dissections (5-layer template)
 ├── 03-registry/          # models.json + leaderboard.json (single source of truth)
 ├── 04-next-gen/          # Gap map & design candidates
-└── vision-language-models.md / vsion-foundation-models.md   # Reference notes
+└── vision-language-models.md / vision-foundation-models.md   # Reference notes
 ```
 
 ## Generalist VLM baselines (watch list)

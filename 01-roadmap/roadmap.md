@@ -32,6 +32,7 @@ Dissect in order; each fixes a weakness of the previous. Use 02-papers/TEMPLATE.
 5. **OlmoEarth** (2025, AI2) — open end-to-end stack; latent MIM
 6. **Copernicus-FM / FLORO / GeoMeld / TerraFlow** (2025–26) — availability-aware inputs, JEPA + caption alignment trends
 - **Exercise:** compare "backbone" vs "embedding field" paradigms — when is each right? Write 1 page.
+- **2025–26 additions:** RAMEN + FlexiMo (resolution-flexible encoders) · GeoLink (OSM as pretraining signal) · MaRS (VHR SAR–optical) · SkySense V2 (one backbone for all modalities) · AgriFM / T-JEPA (temporal)
 
 ## Phase 5 — Evaluation & adaptation (1–2 weeks)
 Where next-gen claims live or die.
@@ -39,6 +40,7 @@ Where next-gen claims live or die.
 - **Adaptation:** linear probe → LoRA (r=8–16 on attention) → decoder-only FT → full FT; UPerNet/DPT heads for dense tasks
 - **Code:** run GEO-Bench-2 eval harness on 2 models; reproduce one leaderboard number
 - **Exercise:** design an eval protocol that would actually rank GeoFMs fairly — cross-region hold-outs, few-shot scaling curves (100/1k/10k labels)
+- **Add these axes:** FairRSFM (biome worst-group score) · VHR-Bench (GSD transfer). Tooling: TerraTorch, GEO-Bench, PANGAEA harnesses
 
 ## Phase 5b — VLM foundations (Vision-Language track, 1–2 weeks)
 How language gets bolted onto vision — the recipe every RS-VLM uses.
@@ -57,15 +59,17 @@ Use 02-papers/TEMPLATE.md; add a "grounding granularity" row to Layer 3.
 - **Also read:** RSMMVP benchmark (why CLIP-blind pairs break RS MLLMs)
 - **Code:** run GeoChat or GeoPixel inference on your own imagery; catalog failure cases
 - **Exercise:** matrix — vision encoder × alignment method × grounding granularity × sensors supported
+- **2026 frontier reads:** TerraScope (masks inside CoT, optical+SAR, bi-temporal) · GeoSolver (process reward model) · MLRS (generalist + tool RL) · FaithRS (faithfulness reward) · Earth-Agent (tool agents)
 
 ## Phase 5d — Build your own RS-VLM (2–4 weeks)
 The build project that ties both tracks together.
 1. **Swap experiment:** replace CLIP in LLaVA with a GeoFM encoder (DOFA or Prithvi features), retrain only the projector
 2. **Data:** build a small domain-specific RS instruction set via the RSTeller/SkyScript OSM method
 3. **Train:** LoRA the LLM on RS instructions
-4. **Eval:** LHRS-Bench, EarthMind-Bench, RSMMVP — does the GeoFM encoder beat CLIP on grounding + multispectral queries?
+4. **Eval:** LHRS-Bench, EarthMind-Bench, RSMMVP, plus GEOBench-VLM, XLRS-Bench, TerraScope-Bench and AESP (answer–grounding consistency). Does the GeoFM encoder beat CLIP on grounding + multispectral queries?
+5. **Baseline to beat:** TerraScope-style recipe with its CLIP-class encoder. The experiment is the encoder swap (see gap-map convergence revision).
 
 ## Phase 6 — Gap-finding & next-gen design (ongoing)
 - Maintain 04-next-gen/gap-map.md from every paper dissection
-- Weekly arXiv/HF scan (ask Claude — or schedule it)
+- Weekly arXiv/HF scan (ask Claude — or schedule it); cross-check against the companion collections listed in the README
 - When 2–3 gaps intersect → draft architecture spec → design review with rs-dl-architect → prototype smallest viable version → eval on GEO-Bench-2 subset

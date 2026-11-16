@@ -1,0 +1,237 @@
+/*
+  GeoFM Lab · shared theme
+  Tokens follow the "Rupesh site theme" (Editorial light / Glass dark / Bold dark-on-phone).
+  Light is the default; dark = html.dark (set by the inline <head> script + theme.js toggle).
+  Page CSS keeps its legacy names (--panel, --text …); they are aliased below, so components
+  never hard-code a mode colour.
+*/
+
+/* ───────── Editorial · light (default) ───────── */
+:root {
+  --bg: #F7F7F4;
+  --bg-2: #EFEFEA;
+  --sf: #FFFFFF;          /* card surface */
+  --sf-2: #F1F1EC;        /* quiet fill: chips, notes, code, table header (opaque) */
+  --ink: #111418;
+  --i2: #4A5260;
+  --mu: #646B75;          /* ≥4.6:1 on every light surface */
+  --ln: #E4E4DF;
+  --ac: #0E6B66;
+  --ac-hover: #0A4F4B;
+  --tint: #E3F1EF;
+  --acink: #0A4F4B;
+  --on-ac: #FFFFFF;       /* text on an accent fill */
+  --hdr-bg: rgba(247, 247, 244, .86);
+  --shadow-card: 0 5px 18px rgba(28, 41, 32, .03);
+  --shadow-lift: 0 12px 28px rgba(28, 41, 32, .08);
+
+  /* status / category colours — darkened for light backgrounds (all ≥5:1) */
+  --ok: #1E7146;          /* production, opportunity, task pills */
+  --warn: #8A5300;        /* frontier, "distinguishing move", diffs */
+  --vio: #6A47AD;         /* VLM track, paradigm, slot B */
+  --rose: #B0304A;        /* gaps */
+  --row-hover: rgba(14, 107, 102, .05);
+
+  --font-sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Instrument Serif", Georgia, serif;
+  --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
+  --display-weight: 400;
+  --display-tracking: -0.01em;
+  --radius-card: 14px;
+  --radius-btn: 8px;
+
+  /* legacy aliases used by index.html / matrix.html / anatomy.html */
+  --panel: var(--sf);
+  --panel2: var(--sf-2);
+  --border: var(--ln);
+  --text: var(--ink);
+  --muted: var(--mu);
+  --accent: var(--ac);
+  --accent2: var(--ok);
+  --amber: var(--warn);
+  --violet: var(--vio);
+
+  color-scheme: light;
+}
+
+/* ───────── Glass · dark (laptops, tablets) ───────── */
+html.dark {
+  --bg: #0B0E12;
+  --bg-2: #101317;
+  --sf: #14181D;          /* opaque version of Glass's 5% white — keeps sticky headers solid */
+  --sf-2: #1B2026;
+  --ink: #ECEDEA;
+  --i2: #C2C7CC;
+  --mu: #A9B0B8;
+  --ln: rgba(255, 255, 255, .10);
+  --ac: #6FC7BB;          /* mint, used only for links, active states and focus */
+  --ac-hover: #9FD8D1;
+  --tint: rgba(111, 199, 187, .10);
+  --acink: #9FD8D1;
+  --on-ac: #06201E;
+  --hdr-bg: rgba(18, 22, 26, .7);
+  --shadow-card: none;
+  --shadow-lift: 0 10px 30px -12px rgba(0, 0, 0, .7), 0 0 0 1px rgba(255, 255, 255, .06);
+
+  --ok: #8CC2FF;          /* sky: modalities, production, opportunity — no longer a second green */
+  --warn: #F2C14E;
+  --vio: #B9A3F5;
+  --rose: #FF8FA3;
+  --row-hover: rgba(255, 255, 255, .03);
+  --hl-grad: linear-gradient(90deg, #9FD8D1 0%, #A9B8FF 100%);  /* headline accent: mint → periwinkle */
+
+  --font-display: var(--font-sans);
+  --display-weight: 600;
+  --display-tracking: -0.03em;
+  --radius-card: 16px;
+  --radius-btn: 999px;
+  color-scheme: dark;
+}
+
+/* ───────── Bold · dark on phones ───────── */
+@media (max-width: 599.98px) and (pointer: coarse) {
+  html.dark {
+    --bg: #0B0C0D;
+    --sf: #121416;
+    --sf-2: #1A1D20;
+    --ink: #F2F2EF;
+    --i2: #B0B6BB;
+    --mu: #9AA0A6;
+    --ln: #26292D;
+    --ac: #6FC7BB;
+    --ac-hover: #9FD8D1;
+    --acink: #9FD8D1;
+    --radius-card: 10px;
+  }
+}
+
+/* ───────── Base ───────── */
+html { background: var(--bg); }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  transition: background-color .25s, color .25s;
+}
+/* Glass ambient glow (dark, non-phone only) */
+@media (min-width: 600px), not all and (pointer: coarse) {
+  html.dark body {
+    background:
+      radial-gradient(760px 520px at -10% -14%, rgba(58, 84, 140, .22), transparent 70%),
+      radial-gradient(560px 480px at 110% 28%, rgba(14, 107, 102, .10), transparent 70%),
+      var(--bg);
+    background-attachment: fixed;
+  }
+}
+a { color: var(--ac); }
+a:hover { color: var(--ac-hover); }
+:where(a, button, input, summary, [tabindex]):focus-visible { outline: 2px solid var(--ac); outline-offset: 2px; }
+
+/* Display type: Instrument Serif in light, tight Geist in dark */
+h1 {
+  font-family: var(--font-display);
+  font-weight: var(--display-weight);
+  letter-spacing: var(--display-tracking);
+}
+h1 { font-size: clamp(28px, 3.4vw, 40px) !important; line-height: 1.08; }
+:root:not(.dark) h1 { font-size: clamp(36px, 4.6vw, 54px) !important; line-height: 1.02; }
+:root:not(.dark) h1 span, :root:not(.dark) h1 em { font-style: italic; }
+html.dark h1 em, html.dark h1 span, html.dark h2 em, html.dark .thesis h3 em, html.dark .hl-em {
+  font-style: normal; color: transparent !important;
+  background: var(--hl-grad); -webkit-background-clip: text; background-clip: text;
+}
+/* dark: numbers and brand in ink, so mint is left for things you can click */
+html.dark .brand em { color: var(--i2); }
+html.dark .stat .n, html.dark .rm-card .big { color: var(--ink) !important; }
+
+code, pre, .shape { font-family: var(--font-mono); }
+
+/* cards pick up the theme's soft shadow + radius */
+.card, .stat, .phase, .gap, .step, .bench, .axis, .stage, details, .check, .tablewrap {
+  box-shadow: var(--shadow-card);
+}
+
+/* ───────── Shared site header (identical on every page) ───────── */
+.site-header {
+  position: sticky; top: 0; z-index: 50;
+  background: var(--hdr-bg); border-bottom: 1px solid var(--ln);
+  backdrop-filter: blur(14px) saturate(1.3); -webkit-backdrop-filter: blur(14px) saturate(1.3);
+}
+.site-header .sh-in {
+  max-width: 1400px; margin: 0 auto; height: 60px; padding: 0 32px;
+  display: flex; align-items: center; gap: 24px;
+}
+.brand {
+  font-family: var(--font-display); font-weight: var(--display-weight); letter-spacing: var(--display-tracking);
+  font-size: 24px; color: var(--ink); text-decoration: none; white-space: nowrap; line-height: 1;
+}
+.brand em { color: var(--ac); }
+html.dark .brand { font-size: 19px; }
+html.dark .brand em { font-style: normal; }
+.brand:hover { color: var(--ink); }
+.site-links { display: flex; gap: 4px; margin-left: auto; overflow-x: auto; scrollbar-width: none; }
+.site-links::-webkit-scrollbar { display: none; }
+.site-links a {
+  color: var(--i2); text-decoration: none; font-size: 14px; white-space: nowrap;
+  padding: 8px 12px; border-radius: var(--radius-btn); transition: color .2s, background .2s;
+}
+.site-links a:hover { color: var(--ink); background: var(--sf-2); }
+.site-links a[aria-current="page"] { color: var(--ac); font-weight: 600; }
+[data-theme-slot] { display: contents; }
+
+/* page intro under the header */
+.page-head { max-width: 1400px; margin: 0 auto; padding: 40px 32px 8px; }
+.page-head h1 { margin: 0; }
+.page-head h1 em, .page-head h1 span { color: var(--ac); }
+.page-head .sub { font-size: 16px !important; line-height: 1.6; color: var(--i2) !important; margin-top: 10px !important; max-width: 72ch; }
+.page-head .sub .upd { color: var(--mu); font-size: 13px; display: block; margin-top: 4px; }
+.eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--mu); margin-bottom: 10px; }
+
+/* display headings used for tab / section titles */
+.display, .tab-head h2 {
+  font-family: var(--font-display); font-weight: var(--display-weight); letter-spacing: var(--display-tracking);
+}
+.tab-head { margin: 8px 0 20px; }
+.tab-head h2 { font-size: 34px; line-height: 1.05; margin: 0 0 8px; }
+html.dark .tab-head h2 { font-size: 28px; }
+.tab-head p { font-size: 15.5px; line-height: 1.6; color: var(--i2); max-width: 78ch; margin: 0; }
+.tab-head p a { color: var(--ac); }
+
+/* ───────── Readability floor for shared controls ───────── */
+.chip {
+  min-height: 36px; padding: 0 15px !important; font-size: 13.5px !important; font-family: inherit;
+  border: 1px solid var(--ln); cursor: pointer;
+  display: inline-flex; align-items: center; border-radius: 999px !important;
+  background: var(--sf) !important; color: var(--i2) !important; transition: border-color .2s, color .2s, background .2s;
+}
+.chip:hover { border-color: var(--mu) !important; color: var(--ink) !important; }
+.chip.on { background: var(--ink) !important; color: var(--bg) !important; border-color: var(--ink) !important; }
+input[type=search] { height: 38px; font-size: 14px !important; border-radius: 999px !important; padding: 0 16px !important; background: var(--sf) !important; }
+.note { font-size: 14.5px !important; line-height: 1.65 !important; }
+
+@media (max-width: 700px) {
+  .site-header .sh-in { padding: 0 16px; gap: 12px; height: 56px; }
+  .site-links a { padding: 8px 8px; font-size: 13.5px; }
+  .site-links a.gh, .site-links a[href="index.html"] { display: none; }
+  .page-head { padding: 28px 16px 4px; }
+  .theme-toggle { padding: 0 10px; }
+  .theme-toggle .lbl { display: none; }
+}
+
+/* ───────── Theme toggle ───────── */
+.theme-toggle {
+  display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 14px;
+  border-radius: 999px; border: 1px solid var(--ln); background: var(--sf);
+  color: var(--i2); font: inherit; font-size: 13px; cursor: pointer;
+  transition: border-color .2s, color .2s, background .2s;
+}
+.theme-toggle:hover { border-color: var(--ac); color: var(--ac); }
+.theme-toggle .ico { width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid currentColor;
+  background: linear-gradient(90deg, currentColor 50%, transparent 50%); }
+.theme-toggle.floating { position: absolute; top: 20px; right: 32px; }
+@media (max-width: 600px) { .theme-toggle.floating { right: 16px; top: 16px; } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+}
