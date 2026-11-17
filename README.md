@@ -1,14 +1,14 @@
 # Awesome Geospatial Vision & Vision-Language Foundation Models 🛰️
 
 [![Awesome](https://awesome.re/badge.svg)](https://awesome.re)
-[![Site](https://img.shields.io/badge/Live-Dashboard-38bdf8)](https://rupesh4604.github.io/Awesome-Geospatial-Vision-Language-Foundation-Models/)
+[![Site](https://img.shields.io/badge/Live-Dashboard-38bdf8)](https://geofm.rupeshmediboyina.dev/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-34d399.svg)](#contributing)
 
 > **Nov 2026 update:** +12 vision GeoFMs (GeoLink, MaRS, FlexiMo, AgriFM, RAMEN, SkySense V2, T-JEPA…), +19 RS-VLMs (TerraScope, GeoSolver, MLRS, FaithRS, Earth-Agent…), +14 benchmarks and datasets, and a new section of surveys, companion collections and eval tooling.
 
 A curated, opinionated map of geospatial foundation models — both **pure-vision GeoFMs** and **vision-language models (RS-VLMs)** — plus a learning roadmap, open-problem gap map, and benchmark tracker.
 
-**Live site:** [Dashboard](https://rupesh4604.github.io/Awesome-Geospatial-Vision-Language-Foundation-Models/) · [RS-VLM Anatomy explainer](https://rupesh4604.github.io/Awesome-Geospatial-Vision-Language-Foundation-Models/anatomy.html) · [Comparison Matrix](https://rupesh4604.github.io/Awesome-Geospatial-Vision-Language-Foundation-Models/matrix.html)
+**Live site:** [Dashboard](https://geofm.rupeshmediboyina.dev/) · [RS-VLM Anatomy explainer](https://geofm.rupeshmediboyina.dev/anatomy.html) · [Comparison Matrix](https://geofm.rupeshmediboyina.dev/matrix.html)
 
 ## Contents
 
@@ -63,7 +63,7 @@ A curated, opinionated map of geospatial foundation models — both **pure-visio
 
 ## Vision-Language Models (RS-VLMs)
 
-63 models tracked, grouped by capability generation. Full per-model breakdown (encoder × bridge × grounding × training data × tasks): **[Comparison Matrix](https://rupesh4604.github.io/Awesome-Geospatial-Vision-Language-Foundation-Models/matrix.html)**
+63 models tracked, grouped by capability generation. Full per-model breakdown (encoder × bridge × grounding × training data × tasks): **[Comparison Matrix](https://geofm.rupeshmediboyina.dev/matrix.html)**
 
 ### Contrastive (retrieval / zero-shot)
 
@@ -256,7 +256,7 @@ Every RS-VLM is three design choices — file each paper into these slots and th
 2. **Slot B — what bridges to the LLM:** MLP projector (LLaVA default), Q-Former/resampler, cross-modal fusion modules.
 3. **Slot C — what grounds the output:** nothing → bbox-as-text → `<SEG>`-token + mask decoder → attention prompting → agentic search.
 
-Interactive walkthrough: **[Anatomy of an RS-VLM](https://rupesh4604.github.io/Awesome-Geospatial-Vision-Language-Foundation-Models/anatomy.html)**
+Interactive walkthrough: **[Anatomy of an RS-VLM](https://geofm.rupeshmediboyina.dev/anatomy.html)**
 
 ## Open problems
 
@@ -264,7 +264,7 @@ Interactive walkthrough: **[Anatomy of an RS-VLM](https://rupesh4604.github.io/A
 
 ## Learning roadmap
 
-9-phase roadmap (SSL fundamentals → EO physics → GeoFM lineage → RS-VLM track → build your own) in [`01-roadmap/roadmap.md`](01-roadmap/roadmap.md), with progress tracking on the [dashboard](https://rupesh4604.github.io/Awesome-Geospatial-Vision-Language-Foundation-Models/).
+9-phase roadmap (SSL fundamentals → EO physics → GeoFM lineage → RS-VLM track → build your own) in [`01-roadmap/roadmap.md`](01-roadmap/roadmap.md), with progress tracking on the [dashboard](https://geofm.rupeshmediboyina.dev/).
 
 ## Repository structure
 
